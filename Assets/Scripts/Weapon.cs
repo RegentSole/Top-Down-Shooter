@@ -14,7 +14,7 @@ public abstract class Weapon : MonoBehaviour
 
     [Header("Visual Settings")]
     public Sprite weaponSprite;
-    public Vector3 equippedPosition = new Vector3(0.3f, 0.1f, 0f);
+    public Vector3 equippedPosition = new Vector3(0.2f, 0.1f, 0f);
 
     protected SpriteRenderer spriteRenderer;
     protected float nextFireTime;
@@ -22,20 +22,44 @@ public abstract class Weapon : MonoBehaviour
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        }
-
-        if (weaponSprite != null)
+        if (spriteRenderer != null && weaponSprite != null)
         {
             spriteRenderer.sprite = weaponSprite;
         }
 
-        spriteRenderer.sortingLayerName = "Weapons";
-        spriteRenderer.sortingOrder = 1;
-
+        // Устанавливаем начальную позицию
         transform.localPosition = equippedPosition;
+    }
+
+    void Update()
+    {
+        if (isAvailable)
+        {
+            UpdateWeaponFlip();
+        }
+    }
+
+    // Метод для обновления переворота оружия
+    protected virtual void UpdateWeaponFlip()
+    {
+        if (Camera.main == null) return;
+
+        // Получаем позицию мыши
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos.z = 0;
+
+        // Определяем направление к мыши
+        Vector3 direction = mousePos - transform.position;
+
+        // Вычисляем угол
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        // Применяем переворот спрайта
+        if (spriteRenderer != null)
+        {
+            // Переворачиваем спрайт, если оружие направлено влево
+            spriteRenderer.flipY = Mathf.Abs(angle) > 90f;
+        }
     }
 
     public abstract void Shoot();
@@ -43,6 +67,7 @@ public abstract class Weapon : MonoBehaviour
     public virtual void Reload()
     {
         ammo = maxAmmo;
+        Debug.Log(weaponName + " reloaded. Ammo: " + ammo);
     }
 
     public virtual bool CanShoot()
