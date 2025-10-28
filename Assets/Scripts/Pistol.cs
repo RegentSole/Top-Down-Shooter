@@ -9,27 +9,29 @@ public class Pistol : Weapon
         weaponName = "Pistol";
         isAvailable = true;
         infiniteAmmo = true;
-
-        // Устанавливаем спрайт, если он назначен
-        if (weaponSprite != null && spriteRenderer != null)
-        {
-            spriteRenderer.sprite = weaponSprite;
-        }
+        flashIntensityMultiplier = 0.8f; // Меньшая вспышка для пистолета
     }
 
     public override void Shoot()
     {
         if (!CanShoot()) return;
 
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        // Выстрел
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
 
         if (rb != null)
         {
-            rb.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);
+            Vector2 shootDirection = firePoint.right;
+            rb.AddForce(shootDirection * bulletForce, ForceMode2D.Impulse);
         }
 
+        // Вспышка выстрела
+        CreateMuzzleFlash();
+
+        // Выброс гильзы
+        EjectShell();
+
         nextFireTime = Time.time + fireRate;
-        Debug.Log("Pistol shot!");
     }
 }

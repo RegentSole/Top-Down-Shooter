@@ -12,16 +12,9 @@ public class PlayerWeaponManager : MonoBehaviour
     public TextMeshProUGUI weaponText;
     public TextMeshProUGUI ammoText;
 
-    private WeaponAim weaponAim;
-
     void Start()
     {
-        weaponAim = GetComponentInChildren<WeaponAim>();
-
-        // Инициализируем все оружие
         InitializeWeapons();
-
-        // Активируем начальное оружие
         SwitchWeapon(0);
         UpdateUI();
     }
@@ -47,6 +40,7 @@ public class PlayerWeaponManager : MonoBehaviour
         // Переключение оружия цифровыми клавишами
         if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchWeapon(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchWeapon(1);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchWeapon(2); // Добавили для автомата
 
         // Перезарядка
         if (Input.GetKeyDown(KeyCode.R))
@@ -55,40 +49,38 @@ public class PlayerWeaponManager : MonoBehaviour
             UpdateUI();
         }
 
-        // Стрельба
+        // Стрельба - для автомата используем автоматический огонь при зажатой кнопке
         if (Input.GetButton("Fire1"))
         {
-            weapons[currentWeaponIndex].Shoot();
+            // Для автомата разрешаем автоматическую стрельбу
+            if (weapons[currentWeaponIndex] is Automat)
+            {
+                weapons[currentWeaponIndex].Shoot();
+            }
+            else
+            {
+                // Для других оружий - одиночные выстрелы
+                if (Input.GetButtonDown("Fire1"))
+                {
+                    weapons[currentWeaponIndex].Shoot();
+                }
+            }
             UpdateUI();
         }
     }
 
     void SwitchWeapon(int newIndex)
     {
-        // Зацикливаем индекс оружия
         if (newIndex < 0) newIndex = weapons.Count - 1;
         if (newIndex >= weapons.Count) newIndex = 0;
 
-        // Проверяем, доступно ли оружие
         if (!weapons[newIndex].isAvailable) return;
 
-        // Скрываем текущее оружие
         weapons[currentWeaponIndex].SetVisible(false);
-
-        // Переключаемся на новое оружие
         currentWeaponIndex = newIndex;
-
-        // Показываем новое оружие
         weapons[currentWeaponIndex].SetVisible(true);
 
-        // Обновляем прицеливание для нового оружия
-        if (weaponAim != null)
-        {
-            weaponAim.firePoint = weapons[currentWeaponIndex].firePoint;
-        }
-
         UpdateUI();
-        Debug.Log("Switched to: " + weapons[currentWeaponIndex].weaponName);
     }
 
     void UpdateUI()
@@ -112,6 +104,11 @@ public class PlayerWeaponManager : MonoBehaviour
             if (weapons[i].weaponName == weaponName)
             {
                 weapons[i].isAvailable = true;
+                // Добавляем патроны при подборе
+                if (!weapons[i].infiniteAmmo)
+                {
+                    weapons[i].ammo = Mathf.Min(weapons[i].ammo + 30, weapons[i].maxAmmo);
+                }
                 SwitchWeapon(i);
                 Debug.Log("Picked up: " + weaponName);
                 return;

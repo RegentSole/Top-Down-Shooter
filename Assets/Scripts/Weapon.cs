@@ -12,6 +12,17 @@ public abstract class Weapon : MonoBehaviour
     public bool isAvailable = false;
     public bool infiniteAmmo = false;
 
+    [Header("Shell Ejection")]
+    public GameObject shellPrefab;
+    public Transform ejectionPoint;
+    public float ejectionForce = 3f;
+    public float ejectionTorque = 10f;
+
+    [Header("Muzzle Flash")]
+    public GameObject muzzleFlashPrefab;
+    public Transform muzzleFlashPoint;
+    public float flashIntensityMultiplier = 1f;
+
     [Header("Visual Settings")]
     public Sprite weaponSprite;
     public Vector3 equippedPosition = new Vector3(0.2f, 0.1f, 0f);
@@ -88,6 +99,47 @@ public abstract class Weapon : MonoBehaviour
         if (spriteRenderer != null)
         {
             spriteRenderer.enabled = visible;
+        }
+    }
+
+    protected virtual void EjectShell()
+    {
+        if (shellPrefab == null || ejectionPoint == null) return;
+
+        // Создаем гильзу
+        GameObject shell = Instantiate(shellPrefab, ejectionPoint.position, ejectionPoint.rotation);
+        Rigidbody2D shellRb = shell.GetComponent<Rigidbody2D>();
+
+        if (shellRb != null)
+        {
+            // Случайное направление выброса
+            Vector2 ejectionDirection = Quaternion.Euler(0, 0, Random.Range(-30f, 30f)) * -transform.right;
+            shellRb.AddForce(ejectionDirection * ejectionForce, ForceMode2D.Impulse);
+
+            // Случайное вращение
+            shellRb.AddTorque(Random.Range(-ejectionTorque, ejectionTorque));
+        }
+    }
+
+    protected virtual void CreateMuzzleFlash()
+    {
+        if (muzzleFlashPrefab == null || muzzleFlashPoint == null) return;
+
+        // Создаем вспышку
+        GameObject flash = Instantiate(muzzleFlashPrefab, muzzleFlashPoint.position, muzzleFlashPoint.rotation);
+        flash.transform.SetParent(muzzleFlashPoint);
+
+        // Настраиваем интенсивность для разного оружия
+        MuzzleFlash flashScript = flash.GetComponent<MuzzleFlash>();
+        if (flashScript != null)
+        {
+            // Можно настроить индивидуально для каждого оружия
+        }
+
+        Light flashLight = flash.GetComponent<Light>();
+        if (flashLight != null)
+        {
+            flashLight.intensity *= flashIntensityMultiplier;
         }
     }
 }

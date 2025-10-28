@@ -9,29 +9,23 @@ public class Shotgun : Weapon
     void Start()
     {
         weaponName = "Shotgun";
-
-        // Устанавливаем спрайт, если он назначен
-        if (weaponSprite != null && spriteRenderer != null)
-        {
-            spriteRenderer.sprite = weaponSprite;
-        }
     }
 
     public override void Shoot()
     {
         if (!CanShoot()) return;
 
+        // Выстрел
         for (int i = 0; i < pellets; i++)
         {
-            float angle = Random.Range(-spreadAngle / 2, spreadAngle / 2);
-            Quaternion rotation = firePoint.rotation * Quaternion.Euler(0, 0, angle);
-
-            GameObject pellet = Instantiate(bulletPrefab, firePoint.position, rotation);
+            GameObject pellet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
             Rigidbody2D rb = pellet.GetComponent<Rigidbody2D>();
 
             if (rb != null)
             {
-                rb.AddForce(pellet.transform.up * bulletForce, ForceMode2D.Impulse);
+                float angle = Random.Range(-spreadAngle / 2, spreadAngle / 2);
+                Vector2 direction = Quaternion.Euler(0, 0, angle) * firePoint.right;
+                rb.AddForce(direction * bulletForce, ForceMode2D.Impulse);
             }
 
             Bullet bulletScript = pellet.GetComponent<Bullet>();
@@ -41,8 +35,10 @@ public class Shotgun : Weapon
             }
         }
 
+        // Выброс гильзы (только одна за весь заряд дроби)
+        EjectShell();
+
         nextFireTime = Time.time + fireRate;
         UseAmmo();
-        Debug.Log("Shotgun blast! Ammo: " + ammo);
     }
 }
