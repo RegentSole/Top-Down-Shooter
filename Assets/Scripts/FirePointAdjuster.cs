@@ -1,54 +1,88 @@
 using UnityEngine;
 
-public class WeaponFirePointFix : MonoBehaviour
+public class WeaponPointsFlipFix : MonoBehaviour
 {
-    [Header("Fire Point References")]
-    public Transform firePoint;
+    [Header("Weapon References")]
     public SpriteRenderer weaponSprite;
 
-    [Header("Fire Point Positions")]
-    public Vector3 rightPosition = new Vector3(0.3f, 0f, 0f);
-    public Vector3 leftPosition = new Vector3(-0.3f, 0f, 0f);
+    [Header("Points to Adjust")]
+    public Transform firePoint;
+    public Vector3 firePointRight = new Vector3(0.3f, 0f, 0f);
+    public Vector3 firePointLeft = new Vector3(-0.3f, 0f, 0f);
+
+    public Transform muzzleFlashPoint;
+    public Vector3 muzzleRight = new Vector3(0.3f, 0f, 0f);
+    public Vector3 muzzleLeft = new Vector3(-0.3f, 0f, 0f);
+
+    public Transform ejectionPoint;
+    public Vector3 ejectionRight = new Vector3(0.1f, 0.1f, 0f);
+    public Vector3 ejectionLeft = new Vector3(-0.1f, 0.1f, 0f);
+
+    [Header("Debug")]
+    public bool showGizmos = true;
+
+    private bool wasFlipped = false;
 
     void Update()
     {
-        FixFirePointPosition();
+        UpdatePointsPosition();
     }
 
-    void FixFirePointPosition()
+    void UpdatePointsPosition()
     {
-        // Проверяем, что все ссылки установлены
-        if (firePoint == null || weaponSprite == null)
-        {
-            Debug.LogWarning("FirePoint or WeaponSprite reference is missing!");
-            return;
-        }
+        if (weaponSprite == null) return;
 
-        // Корректируем позицию FirePoint в зависимости от направления оружия
-        if (weaponSprite.flipY) // Оружие смотрит влево
-        {
-            firePoint.localPosition = leftPosition;
-        }
-        else // Оружие смотрит вправо
-        {
-            firePoint.localPosition = rightPosition;
-        }
+        bool isFlipped = weaponSprite.flipY;
 
-        // Сохраняем нейтральный поворот FirePoint
-        firePoint.localRotation = Quaternion.identity;
+        // Обновляем только при изменении состояния flip
+        if (isFlipped != wasFlipped)
+        {
+            // Корректируем firePoint
+            if (firePoint != null)
+            {
+                firePoint.localPosition = isFlipped ? firePointLeft : firePointRight;
+            }
+
+            // Корректируем muzzleFlashPoint
+            if (muzzleFlashPoint != null)
+            {
+                muzzleFlashPoint.localPosition = isFlipped ? muzzleLeft : muzzleRight;
+            }
+
+            // Корректируем ejectionPoint
+            if (ejectionPoint != null)
+            {
+                ejectionPoint.localPosition = isFlipped ? ejectionLeft : ejectionRight;
+            }
+
+            wasFlipped = isFlipped;
+        }
     }
 
-    // Визуализация в редакторе для удобства настройки
+    // Визуализация в редакторе
     void OnDrawGizmosSelected()
     {
+        if (!showGizmos) return;
+
+        Gizmos.color = Color.red;
         if (firePoint != null)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(firePoint.position, 0.05f);
+            Gizmos.DrawWireSphere(transform.TransformPoint(firePointRight), 0.02f);
+            Gizmos.DrawWireSphere(transform.TransformPoint(firePointLeft), 0.02f);
+        }
 
-            // Рисуем направление выстрела
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawRay(firePoint.position, firePoint.right * 0.3f);
+        Gizmos.color = Color.yellow;
+        if (muzzleFlashPoint != null)
+        {
+            Gizmos.DrawWireSphere(transform.TransformPoint(muzzleRight), 0.015f);
+            Gizmos.DrawWireSphere(transform.TransformPoint(muzzleLeft), 0.015f);
+        }
+
+        Gizmos.color = Color.blue;
+        if (ejectionPoint != null)
+        {
+            Gizmos.DrawWireSphere(transform.TransformPoint(ejectionRight), 0.01f);
+            Gizmos.DrawWireSphere(transform.TransformPoint(ejectionLeft), 0.01f);
         }
     }
 }

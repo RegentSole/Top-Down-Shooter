@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 6468603344992531026}
   - component: {fileID: 4481081106059790791}
   - component: {fileID: 4728587653447915369}
+  - component: {fileID: 5806040341901928020}
+  - component: {fileID: -5947668086311251915}
   m_Layer: 8
   m_Name: EnemyShotgun
   m_TagString: Enemy
@@ -56,7 +58,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 642fd9e7d40a9409e8c79be772beb312, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -181,6 +183,36 @@ MonoBehaviour:
   detectionRange: 10
   attackRange: 7
   player: {fileID: 0}
+--- !u!114 &5806040341901928020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113020719779909793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 258350f5edeeb48728d5e31db88f2267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 15
+  useDissolveEffect: 1
+--- !u!114 &-5947668086311251915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113020719779909793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: add8c3e6ca2bd4376b85029939b6e6b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dissolveDuration: 1.5
+  startDelay: 0
+  destroyOnComplete: 1
+  objectRenderer: {fileID: 8264944052077385916}
 --- !u!1 &3214891193444799588
 GameObject:
   m_ObjectHideFlags: 0

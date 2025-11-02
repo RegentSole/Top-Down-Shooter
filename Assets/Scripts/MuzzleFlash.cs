@@ -3,9 +3,8 @@ using UnityEngine;
 public class MuzzleFlash : MonoBehaviour
 {
     [Header("Flash Settings")]
-    public float flashDuration = 0.05f;
-    public float maxSize = 1.5f;
-    public float minSize = 0.8f;
+    public float flashDuration = 0.08f;
+    public bool useLight = true;
 
     private SpriteRenderer spriteRenderer;
     private Light flashLight;
@@ -16,46 +15,41 @@ public class MuzzleFlash : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         flashLight = GetComponent<Light>();
 
-        // Случайный размер вспышки
-        float randomSize = Random.Range(minSize, maxSize);
-        transform.localScale = Vector3.one * randomSize;
-
-        // Случайный поворот
-        transform.Rotate(0, 0, Random.Range(0, 360f));
-
-        // Начинаем исчезать
-        StartCoroutine(FadeFlash());
-    }
-
-    System.Collections.IEnumerator FadeFlash()
-    {
-        timer = 0f;
-
-        while (timer < flashDuration)
+        // Гарантируем, что компоненты активны
+        if (spriteRenderer != null)
         {
-            timer += Time.deltaTime;
-            float progress = timer / flashDuration;
-
-            // Плавное исчезновение
-            if (spriteRenderer != null)
-            {
-                Color color = spriteRenderer.color;
-                color.a = 1f - progress;
-                spriteRenderer.color = color;
-            }
-
-            // Уменьшаем интенсивность света
-            if (flashLight != null)
-            {
-                flashLight.intensity = 1f - progress;
-            }
-
-            // Немного уменьшаем размер
-            transform.localScale = Vector3.one * (maxSize * (1f - progress * 0.5f));
-
-            yield return null;
+            spriteRenderer.enabled = true;
         }
 
-        Destroy(gameObject);
+        if (flashLight != null && useLight)
+        {
+            flashLight.enabled = true;
+        }
+
+        // Уничтожаем через время
+        Destroy(gameObject, flashDuration);
+    }
+
+    void Update()
+    {
+        timer += Time.deltaTime;
+        float progress = timer / flashDuration;
+
+        // Плавное исчезновение для спрайта
+        if (spriteRenderer != null)
+        {
+            Color color = spriteRenderer.color;
+            color.a = 1f - progress;
+            spriteRenderer.color = color;
+
+            // Не меняем масштаб - оставляем как есть
+            // transform.localScale = Vector3.one * (1f - progress * 0.3f);
+        }
+
+        // Плавное исчезновение для света
+        if (flashLight != null && useLight)
+        {
+            flashLight.intensity *= (1f - progress);
+        }
     }
 }

@@ -14,7 +14,18 @@ public class Bullet : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            Destroy(other.gameObject);
+            // Наносим урон врагу
+            EnemyHealth enemyHealth = other.GetComponent<EnemyHealth>();
+            if (enemyHealth != null)
+            {
+                enemyHealth.TakeDamage(damage);
+            }
+
+            Destroy(gameObject);
+        }
+        else if (other.CompareTag("Wall"))
+        {
+            // Столкновение со стеной
             Destroy(gameObject);
         }
     }

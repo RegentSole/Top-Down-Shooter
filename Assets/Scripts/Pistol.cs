@@ -22,7 +22,7 @@ public class Pistol : Weapon
 
         if (rb != null)
         {
-            Vector2 shootDirection = firePoint.right;
+            Vector2 shootDirection = firePoint.up;
             rb.AddForce(shootDirection * bulletForce, ForceMode2D.Impulse);
         }
 
@@ -31,6 +31,8 @@ public class Pistol : Weapon
 
         // Выброс гильзы
         EjectShell();
+
+        ApplyRecoil();
 
         nextFireTime = Time.time + fireRate;
     }

@@ -11,6 +11,8 @@ public abstract class Weapon : MonoBehaviour
     public int maxAmmo = 10;
     public bool isAvailable = false;
     public bool infiniteAmmo = false;
+    public float recoilAmount = 0.1f;
+    public float recoilRecoverySpeed = 5f;
 
     [Header("Shell Ejection")]
     public GameObject shellPrefab;
@@ -125,21 +127,62 @@ public abstract class Weapon : MonoBehaviour
     {
         if (muzzleFlashPrefab == null || muzzleFlashPoint == null) return;
 
-        // Создаем вспышку
-        GameObject flash = Instantiate(muzzleFlashPrefab, muzzleFlashPoint.position, muzzleFlashPoint.rotation);
-        flash.transform.SetParent(muzzleFlashPoint);
+        // Запоминаем текущую позицию и поворот
+        Vector3 flashPosition = muzzleFlashPoint.position;
+        Quaternion flashRotation = muzzleFlashPoint.rotation;
 
-        // Настраиваем интенсивность для разного оружия
-        MuzzleFlash flashScript = flash.GetComponent<MuzzleFlash>();
-        if (flashScript != null)
-        {
-            // Можно настроить индивидуально для каждого оружия
-        }
+        // Создаем вспышку в запомненной позиции
+        GameObject flash = Instantiate(muzzleFlashPrefab, flashPosition, flashRotation);
 
-        Light flashLight = flash.GetComponent<Light>();
-        if (flashLight != null)
+        // Запускаем корутину для микро-корректировки позиции
+        StartCoroutine(AdjustFlashPosition(flash, muzzleFlashPoint));
+    }
+
+    private System.Collections.IEnumerator AdjustFlashPosition(GameObject flash, Transform target)
+    {
+        // Ждем до конца кадра, чтобы все трансформы обновились
+        yield return new WaitForEndOfFrame();
+
+        // Корректируем позицию
+        if (flash != null && target != null)
         {
-            flashLight.intensity *= flashIntensityMultiplier;
+            flash.transform.position = target.position;
+            flash.transform.rotation = target.rotation;
         }
     }
+
+    // Добавьте в класс Weapon
+
+    protected virtual void ApplyRecoil()
+    {
+        StartCoroutine(RecoilCoroutine());
+    }
+
+    System.Collections.IEnumerator RecoilCoroutine()
+    {
+        Vector3 originalPosition = transform.localPosition;
+        Vector3 recoilPosition = originalPosition - new Vector3(recoilAmount, 0, 0);
+
+        // Отдача
+        float elapsedTime = 0f;
+        while (elapsedTime < 0.05f)
+        {
+            transform.localPosition = Vector3.Lerp(originalPosition, recoilPosition, elapsedTime / 0.05f);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Возврат
+        elapsedTime = 0f;
+        while (elapsedTime < 0.1f)
+        {
+            transform.localPosition = Vector3.Lerp(recoilPosition, originalPosition, elapsedTime / 0.1f);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localPosition = originalPosition;
+    }
+
+    // Вызывайте ApplyRecoil() в каждом Shoot после CreateMuzzleFlash()
 }

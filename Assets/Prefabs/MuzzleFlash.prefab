@@ -95,9 +95,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 830904049005581561}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 200c1b28afb81413388b0b0b6605c1ee, type: 3}
+  m_Script: {fileID: 11500000, guid: b4c8cf553f4ff4335931b58592756b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flashDuration: 0.08
+  useLight: 1
 --- !u!1 &2363835102127363282
 GameObject:
   m_ObjectHideFlags: 0

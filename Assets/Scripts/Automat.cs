@@ -22,12 +22,16 @@ public class Automat : Weapon
         if (rb != null)
         {
             float spread = Random.Range(-2f, 2f);
-            Vector2 direction = Quaternion.Euler(0, 0, spread) * firePoint.right;
+            Vector2 direction = Quaternion.Euler(0, 0, spread) * firePoint.up;
             rb.AddForce(direction * bulletForce, ForceMode2D.Impulse);
         }
 
+        CreateMuzzleFlash();
+
         // Выброс гильзы
         EjectShell();
+
+        ApplyRecoil();
 
         // Настраиваем урон пули
         Bullet bulletScript = bullet.GetComponent<Bullet>();

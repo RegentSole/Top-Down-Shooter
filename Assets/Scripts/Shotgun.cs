@@ -24,7 +24,7 @@ public class Shotgun : Weapon
             if (rb != null)
             {
                 float angle = Random.Range(-spreadAngle / 2, spreadAngle / 2);
-                Vector2 direction = Quaternion.Euler(0, 0, angle) * firePoint.right;
+                Vector2 direction = Quaternion.Euler(0, 0, angle) * firePoint.up;
                 rb.AddForce(direction * bulletForce, ForceMode2D.Impulse);
             }
 
@@ -35,8 +35,12 @@ public class Shotgun : Weapon
             }
         }
 
+        CreateMuzzleFlash();
+
         // Выброс гильзы (только одна за весь заряд дроби)
         EjectShell();
+
+        ApplyRecoil();
 
         nextFireTime = Time.time + fireRate;
         UseAmmo();
