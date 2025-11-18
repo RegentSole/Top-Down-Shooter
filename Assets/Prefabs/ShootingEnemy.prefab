@@ -108,6 +108,8 @@ MonoBehaviour:
   bulletForce: 10
   detectionRange: 10
   attackRange: 8
+  shootSound: {fileID: 8300000, guid: 3d87304d7b3c64be38048001ea625ae7, type: 3}
+  shootVolume: 0.5
   player: {fileID: 0}
 --- !u!50 &3770839100667923987
 Rigidbody2D:

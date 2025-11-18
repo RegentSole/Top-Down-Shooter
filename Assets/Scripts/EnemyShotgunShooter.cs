@@ -12,6 +12,10 @@ public class EnemyShotgunShooter : MonoBehaviour
     public float detectionRange = 10f;
     public float attackRange = 7f;
 
+    [Header("Audio")]
+    public AudioClip shootSound;
+    public float shootVolume = 0.8f;
+
     [Header("References")]
     public Transform player;
 
@@ -83,6 +87,17 @@ public class EnemyShotgunShooter : MonoBehaviour
                 // Уменьшаем урон каждой дробинки
                 bulletScript.damage = bulletScript.damage / 2;
             }
+        }
+
+        // Воспроизводим звук выстрела
+        PlayShootSound();
+    }
+
+    void PlayShootSound()
+    {
+        if (shootSound != null)
+        {
+            AudioSource.PlayClipAtPoint(shootSound, transform.position, shootVolume);
         }
     }
 

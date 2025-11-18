@@ -34,6 +34,10 @@ public class Pistol : Weapon
 
         ApplyRecoil();
 
+        PlayShootSound();
+
+        ShakeCamera();
+
         nextFireTime = Time.time + fireRate;
     }
 }

@@ -42,6 +42,8 @@ public class Shotgun : Weapon
 
         ApplyRecoil();
 
+        PlayShootSound();
+
         nextFireTime = Time.time + fireRate;
         UseAmmo();
     }

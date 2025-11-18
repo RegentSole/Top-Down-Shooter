@@ -33,6 +33,8 @@ public class Automat : Weapon
 
         ApplyRecoil();
 
+        PlayShootSound();
+
         // Настраиваем урон пули
         Bullet bulletScript = bullet.GetComponent<Bullet>();
         if (bulletScript != null)

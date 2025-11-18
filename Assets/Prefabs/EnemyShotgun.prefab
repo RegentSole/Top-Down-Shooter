@@ -182,6 +182,8 @@ MonoBehaviour:
   spreadAngle: 35
   detectionRange: 10
   attackRange: 7
+  shootSound: {fileID: 8300000, guid: 22e8c20ab7ea842ae842bf4cedb334ce, type: 3}
+  shootVolume: 0.8
   player: {fileID: 0}
 --- !u!114 &5806040341901928020
 MonoBehaviour:

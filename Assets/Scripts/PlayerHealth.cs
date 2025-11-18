@@ -9,6 +9,10 @@ public class PlayerHealth : MonoBehaviour
     [Header("UI References")]
     public TextMeshProUGUI healthText;
 
+    [Header("Audio")]
+    public AudioClip healSound;
+    public float healVolume = 0.5f;
+
     private float currentHealth;
 
     void Start()
@@ -17,10 +21,9 @@ public class PlayerHealth : MonoBehaviour
         UpdateHealthUI();
     }
 
-    // Этот метод теперь вызывается только из скрипта пули
     public void TakeDamage(float damageAmount)
     {
-        if (currentHealth <= 0) return; // Если игрок уже мертв, не обрабатываем урон
+        if (currentHealth <= 0) return;
 
         currentHealth = Mathf.Max(0, currentHealth - damageAmount);
         UpdateHealthUI();
@@ -31,11 +34,42 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    public void Heal(float healAmount)
+    {
+        float oldHealth = currentHealth;
+        currentHealth = Mathf.Min(currentHealth + healAmount, maxHealth);
+        float actualHeal = currentHealth - oldHealth;
+
+        UpdateHealthUI();
+
+        // Воспроизводим звук лечения
+        if (actualHeal > 0 && healSound != null)
+        {
+            AudioSource.PlayClipAtPoint(healSound, transform.position, healVolume);
+        }
+
+        Debug.Log($"Player healed for {actualHeal}. Health: {currentHealth}/{maxHealth}");
+    }
+
     void UpdateHealthUI()
     {
         if (healthText != null)
         {
             healthText.text = $"HP: {Mathf.RoundToInt(currentHealth)}/{maxHealth}";
+
+            // Меняем цвет текста в зависимости от здоровья
+            if (currentHealth < maxHealth * 0.3f)
+            {
+                healthText.color = Color.red;
+            }
+            else if (currentHealth < maxHealth * 0.7f)
+            {
+                healthText.color = Color.yellow;
+            }
+            else
+            {
+                healthText.color = Color.green;
+            }
         }
     }
 
@@ -43,13 +77,23 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("Player died!");
         // Здесь можно добавить обработку смерти игрока
-        // Например, отключение управления, анимацию смерти, перезагрузку уровня
     }
 
-    // Метод для лечения (на будущее)
-    public void Heal(float healAmount)
+    // Для отладки
+    void Update()
     {
-        currentHealth = Mathf.Min(currentHealth + healAmount, maxHealth);
-        UpdateHealthUI();
+        // Тестовые клавиши для проверки лечения/урона
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            TakeDamage(10f);
+        }
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            Heal(25f);
+        }
     }
+
+    // Свойство для доступа к текущему здоровью из других скриптов
+    public float CurrentHealth => currentHealth;
+    public float HealthPercentage => currentHealth / maxHealth;
 }

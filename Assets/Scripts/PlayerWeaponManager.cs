@@ -12,6 +12,10 @@ public class PlayerWeaponManager : MonoBehaviour
     public TextMeshProUGUI weaponText;
     public TextMeshProUGUI ammoText;
 
+    [Header("Weapon Switch Sound")]
+    public AudioClip weaponSwitchSound;
+    public float switchVolume = 0.7f;
+
     void Start()
     {
         InitializeWeapons();
@@ -40,7 +44,7 @@ public class PlayerWeaponManager : MonoBehaviour
         // Переключение оружия цифровыми клавишами
         if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchWeapon(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchWeapon(1);
-        if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchWeapon(2); // Добавили для автомата
+        if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchWeapon(2);
 
         // Перезарядка
         if (Input.GetKeyDown(KeyCode.R))
@@ -49,17 +53,15 @@ public class PlayerWeaponManager : MonoBehaviour
             UpdateUI();
         }
 
-        // Стрельба - для автомата используем автоматический огонь при зажатой кнопке
+        // Стрельба
         if (Input.GetButton("Fire1"))
         {
-            // Для автомата разрешаем автоматическую стрельбу
             if (weapons[currentWeaponIndex] is Automat)
             {
                 weapons[currentWeaponIndex].Shoot();
             }
             else
             {
-                // Для других оружий - одиночные выстрелы
                 if (Input.GetButtonDown("Fire1"))
                 {
                     weapons[currentWeaponIndex].Shoot();
@@ -80,7 +82,18 @@ public class PlayerWeaponManager : MonoBehaviour
         currentWeaponIndex = newIndex;
         weapons[currentWeaponIndex].SetVisible(true);
 
+        // Воспроизводим звук ЭТОГО оружия
+        weapons[currentWeaponIndex].PlayEquipSound();
+
         UpdateUI();
+    }
+
+    void PlayWeaponSwitchSound()
+    {
+        if (weaponSwitchSound != null)
+        {
+            AudioSource.PlayClipAtPoint(weaponSwitchSound, transform.position, switchVolume);
+        }
     }
 
     void UpdateUI()
@@ -104,12 +117,15 @@ public class PlayerWeaponManager : MonoBehaviour
             if (weapons[i].weaponName == weaponName)
             {
                 weapons[i].isAvailable = true;
-                // Добавляем патроны при подборе
                 if (!weapons[i].infiniteAmmo)
                 {
                     weapons[i].ammo = Mathf.Min(weapons[i].ammo + 30, weapons[i].maxAmmo);
                 }
+
+                // Воспроизводим звук при подборе оружия
+                PlayWeaponSwitchSound();
                 SwitchWeapon(i);
+
                 Debug.Log("Picked up: " + weaponName);
                 return;
             }

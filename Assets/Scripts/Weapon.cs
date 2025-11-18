@@ -25,9 +25,26 @@ public abstract class Weapon : MonoBehaviour
     public Transform muzzleFlashPoint;
     public float flashIntensityMultiplier = 1f;
 
+    [Header("Audio")]
+    public AudioClip shootSound;
+    public float volume = 1f;
+
+    [Header("Weapon Switch Sound")]
+    public AudioClip equipSound;
+    public float equipVolume = 0.7f;
+
+    [Header("Empty Mag Sound")]
+    public AudioClip emptySound;
+    public float emptySoundVolume = 0.5f;
+
     [Header("Visual Settings")]
     public Sprite weaponSprite;
     public Vector3 equippedPosition = new Vector3(0.2f, 0.1f, 0f);
+
+    [Header("Camera Shake Settings")]
+    public float shakeDuration = 0.1f;
+    public float shakeMagnitude = 0.05f;
+
 
     protected SpriteRenderer spriteRenderer;
     protected float nextFireTime;
@@ -42,6 +59,33 @@ public abstract class Weapon : MonoBehaviour
 
         // Устанавливаем начальную позицию
         transform.localPosition = equippedPosition;
+    }
+
+    protected virtual void PlayShootSound()
+    {
+        if (shootSound != null)
+        {
+            // Простой способ, который всегда работает
+            AudioSource.PlayClipAtPoint(shootSound, transform.position, volume);
+            Debug.Log("Sound played via PlayClipAtPoint");
+        }
+        else
+        {
+            Debug.LogError("No shoot sound assigned!");
+        }
+    }
+
+    protected virtual void PlayEmptySound()
+    {
+        if (emptySound != null)
+        {
+            AudioSource.PlayClipAtPoint(emptySound, Camera.main.transform.position, emptySoundVolume);
+            Debug.Log("Played empty mag sound");
+        }
+        else
+        {
+            Debug.LogWarning("No empty sound assigned!");
+        }
     }
 
     void Update()
@@ -86,6 +130,32 @@ public abstract class Weapon : MonoBehaviour
     public virtual bool CanShoot()
     {
         return Time.time >= nextFireTime && (ammo > 0 || infiniteAmmo) && isAvailable;
+    }
+
+    /*public virtual bool TryShoot()
+    {
+        if (CanShoot())
+        {
+            Shoot();
+            return true;
+        }
+        else
+        {
+            // Воспроизводим звук пустого магазина если нет патронов
+            if (!infiniteAmmo && ammo <= 0)
+            {
+                PlayEmptySound();
+            }
+            return false;
+        }
+    }*/
+
+    public void CheckAmmoAndPlaySound()
+    {
+        if (!infiniteAmmo && ammo <= 0 && emptySound != null)
+        {
+            AudioSource.PlayClipAtPoint(emptySound, Camera.main.transform.position, emptySoundVolume);
+        }
     }
 
     protected void UseAmmo()
@@ -158,6 +228,19 @@ public abstract class Weapon : MonoBehaviour
         StartCoroutine(RecoilCoroutine());
     }
 
+    protected virtual void ShakeCamera()
+    {
+        if (CameraShake.Instance != null)
+        {
+            Debug.Log("Shaking camera!"); // Для отладки
+            CameraShake.Instance.Shake(shakeDuration, shakeMagnitude);
+        }
+        else
+        {
+            Debug.LogWarning("CameraShake Instance is null!");
+        }
+    }
+
     System.Collections.IEnumerator RecoilCoroutine()
     {
         Vector3 originalPosition = transform.localPosition;
@@ -185,4 +268,12 @@ public abstract class Weapon : MonoBehaviour
     }
 
     // Вызывайте ApplyRecoil() в каждом Shoot после CreateMuzzleFlash()
+
+    public void PlayEquipSound()
+    {
+        if (equipSound != null)
+        {
+            AudioSource.PlayClipAtPoint(equipSound, transform.position, equipVolume);
+        }
+    }
 }

@@ -10,6 +10,10 @@ public class EnemyShooting : MonoBehaviour
     public float detectionRange = 10f;
     public float attackRange = 8f;
 
+    [Header("Audio")]
+    public AudioClip shootSound;
+    public float shootVolume = 0.7f;
+
     [Header("References")]
     public Transform player;
 
@@ -64,6 +68,17 @@ public class EnemyShooting : MonoBehaviour
         // Направляем пулю в игрока
         Vector2 direction = (player.position - firePoint.position).normalized;
         rb.AddForce(direction * bulletForce, ForceMode2D.Impulse);
+
+        // Воспроизводим звук выстрела
+        PlayShootSound();
+    }
+
+    void PlayShootSound()
+    {
+        if (shootSound != null)
+        {
+            AudioSource.PlayClipAtPoint(shootSound, transform.position, shootVolume);
+        }
     }
 
     void RotateTowardsPlayer()
