@@ -15,6 +15,9 @@ GameObject:
   - component: {fileID: 4728587653447915369}
   - component: {fileID: 5806040341901928020}
   - component: {fileID: -5947668086311251915}
+  - component: {fileID: -8085235833402994547}
+  - component: {fileID: 4951537541645040808}
+  - component: {fileID: -163324543545867654}
   m_Layer: 8
   m_Name: EnemyShotgun
   m_TagString: Enemy
@@ -32,8 +35,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -19, y: 0.53, z: 5.4094152}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.6666667}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7196780888255196636}
   m_Father: {fileID: 0}
@@ -79,9 +82,9 @@ SpriteRenderer:
   m_SortingLayerID: -612436271
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 2747690628134850419, guid: b670ab75dde984907b8570040daa08c5, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
-  m_FlipX: 0
+  m_Sprite: {fileID: -1131326276, guid: 29657255437194eaa914bb3a5868b22b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 0.8828125}
@@ -122,18 +125,18 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.005132675, y: -0.000797987}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 0.8828125}
+    oldSize: {x: 2.66, y: 1.55}
     newSize: {x: 1, y: 0.8828125}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.8828125}
+  m_Size: {x: 2.7653847, y: 1.6545856}
   m_EdgeRadius: 0
 --- !u!50 &4481081106059790791
 Rigidbody2D:
@@ -215,6 +218,105 @@ MonoBehaviour:
   startDelay: 0
   destroyOnComplete: 1
   objectRenderer: {fileID: 8264944052077385916}
+--- !u!114 &-8085235833402994547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113020719779909793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a182e4082152b4d619c8259138a72377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRange: 10
+  attackRange: 5
+  moveSpeed: 2
+  rotationSpeed: 5
+  health: 50
+  player: {fileID: 0}
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  currentState: 1
+  bulletPrefab: {fileID: 6924770089943078313, guid: 3478c82053a5442f7a28831c0bfa1cd9, type: 3}
+  firePoint: {fileID: 7196780888255196636}
+  fireRate: 0.8
+  bulletForce: 8
+  pellets: 5
+  spreadAngle: 45
+  chargeSpeed: 3.5
+  minAttackDistance: 2
+  alwaysCharge: 1
+--- !u!61 &4951537541645040808
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113020719779909793}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.033628464, y: -0.015617907}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.66, y: 1.55}
+    newSize: {x: 1, y: 0.8828125}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2.6071587, y: 1.5346586}
+  m_EdgeRadius: 0
+--- !u!114 &-163324543545867654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113020719779909793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed9b599dd172425a8050490e6e2826d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 10
+  damageCooldown: 1
+  knockback: 1
+  knockbackForce: 5
+  hitEffectPrefab: {fileID: 0}
+  hitSound: {fileID: 0}
+  soundVolume: 0.5
+  useTrigger: 0
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &3214891193444799588
 GameObject:
   m_ObjectHideFlags: 0

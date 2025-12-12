@@ -15,9 +15,17 @@ public class EnemyHealth : MonoBehaviour
 
     public void TakeDamage(float damageAmount)
     {
-        if (health <= 0) return; // Если уже мертв, игнорируем урон
+        if (health <= 0) return;
 
         health -= damageAmount;
+
+        // Оповещаем ИИ о получении урона
+        EnemyAI enemyAI = GetComponent<EnemyAI>();
+        if (enemyAI != null)
+        {
+            enemyAI.TakeDamage(damageAmount);
+        }
+
         Debug.Log($"Enemy took {damageAmount} damage. Health: {health}");
 
         if (health <= 0)

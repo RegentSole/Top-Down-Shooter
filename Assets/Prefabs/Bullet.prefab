@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: -4070869595969714845}
   m_Layer: 7
   m_Name: Bullet
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -185,10 +185,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3949cb95aafa74c6abba453e677d7033, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletTrail: {fileID: -4070869595969714845}
-  trailTime: 0.1
   damage: 10
   lifetime: 2
+  bulletTrail: {fileID: -4070869595969714845}
+  trailTime: 0.1
 --- !u!96 &-4070869595969714845
 TrailRenderer:
   serializedVersion: 3

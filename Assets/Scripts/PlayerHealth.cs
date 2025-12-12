@@ -13,7 +13,13 @@ public class PlayerHealth : MonoBehaviour
     public AudioClip healSound;
     public float healVolume = 0.5f;
 
+    [Header("Game Over")]
+    public bool triggerGameOver = true;
+    public GameObject deathEffectPrefab;
+    public AudioClip deathSound;
+
     private float currentHealth;
+    private bool isDead = false;
 
     void Start()
     {
@@ -23,12 +29,12 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float damageAmount)
     {
-        if (currentHealth <= 0) return;
+        if (currentHealth <= 0 || isDead) return;
 
         currentHealth = Mathf.Max(0, currentHealth - damageAmount);
         UpdateHealthUI();
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && !isDead)
         {
             Die();
         }
@@ -36,13 +42,14 @@ public class PlayerHealth : MonoBehaviour
 
     public void Heal(float healAmount)
     {
+        if (isDead) return;
+
         float oldHealth = currentHealth;
         currentHealth = Mathf.Min(currentHealth + healAmount, maxHealth);
         float actualHeal = currentHealth - oldHealth;
 
         UpdateHealthUI();
 
-        // Воспроизводим звук лечения
         if (actualHeal > 0 && healSound != null)
         {
             AudioSource.PlayClipAtPoint(healSound, transform.position, healVolume);
@@ -57,7 +64,6 @@ public class PlayerHealth : MonoBehaviour
         {
             healthText.text = $"HP: {Mathf.RoundToInt(currentHealth)}/{maxHealth}";
 
-            // Меняем цвет текста в зависимости от здоровья
             if (currentHealth < maxHealth * 0.3f)
             {
                 healthText.color = Color.red;
@@ -75,25 +81,107 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
+        if (isDead) return;
+
+        isDead = true;
+
         Debug.Log("Player died!");
-        // Здесь можно добавить обработку смерти игрока
+
+        // Визуальные эффекты смерти
+        if (deathEffectPrefab != null)
+        {
+            Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+        }
+
+        if (deathSound != null)
+        {
+            AudioSource.PlayClipAtPoint(deathSound, transform.position, 1f);
+        }
+
+        // Отключаем спрайт игрока
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = false;
+        }
+
+        // Отключаем коллайдер
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = false;
+        }
+
+        // Отключаем управление
+        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
+        foreach (var script in scripts)
+        {
+            if (script != this)
+            {
+                script.enabled = false;
+            }
+        }
+
+        // Вызываем Game Over
+        if (triggerGameOver && GameManager.Instance != null)
+        {
+            GameManager.Instance.GameOver();
+        }
+        else
+        {
+            Debug.LogWarning("GameManager не найден. Game Over не будет вызван.");
+        }
     }
 
     // Для отладки
     void Update()
     {
-        // Тестовые клавиши для проверки лечения/урона
-        if (Input.GetKeyDown(KeyCode.H))
+        if (Input.GetKeyDown(KeyCode.H) && !isDead)
         {
             TakeDamage(10f);
         }
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J) && !isDead)
         {
             Heal(25f);
         }
+
+        // Тест Game Over
+        if (Input.GetKeyDown(KeyCode.G) && !isDead)
+        {
+            Die();
+        }
     }
 
-    // Свойство для доступа к текущему здоровью из других скриптов
+    // Свойства для доступа из других скриптов
     public float CurrentHealth => currentHealth;
     public float HealthPercentage => currentHealth / maxHealth;
+    public bool IsDead => isDead;
+
+    // Метод для возрождения (если понадобится)
+    public void Revive(float healthPercent = 1f)
+    {
+        isDead = false;
+        currentHealth = maxHealth * Mathf.Clamp01(healthPercent);
+
+        // Включаем компоненты
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+        }
+
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = true;
+        }
+
+        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
+        foreach (var script in scripts)
+        {
+            script.enabled = true;
+        }
+
+        UpdateHealthUI();
+    }
 }
