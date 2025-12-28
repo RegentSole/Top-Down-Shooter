@@ -24,7 +24,6 @@ public class EnemyShotgunShooter : MonoBehaviour
 
     void Start()
     {
-        // Автоматически находим игрока
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -41,18 +40,15 @@ public class EnemyShotgunShooter : MonoBehaviour
     {
         if (player == null) return;
 
-        // Проверяем, находится ли игрок в зоне обнаружения
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
         playerInRange = distanceToPlayer <= detectionRange;
 
-        // Если игрок в зоне атаки и пришло время стрелять
         if (playerInRange && distanceToPlayer <= attackRange && Time.time >= nextFireTime)
         {
             Shoot();
             nextFireTime = Time.time + fireRate;
         }
 
-        // Поворачиваем врага в сторону игрока
         if (playerInRange)
         {
             RotateTowardsPlayer();
@@ -63,33 +59,26 @@ public class EnemyShotgunShooter : MonoBehaviour
     {
         if (enemyBulletPrefab == null || firePoint == null) return;
 
-        // Создаем несколько дробинок
         for (int i = 0; i < pellets; i++)
         {
-            // Рассчитываем случайное отклонение
             float angle = Random.Range(-spreadAngle / 2, spreadAngle / 2);
             Quaternion rotation = firePoint.rotation * Quaternion.Euler(0, 0, angle);
 
-            // Создаем дробинку
             GameObject pellet = Instantiate(enemyBulletPrefab, firePoint.position, rotation);
             Rigidbody2D rb = pellet.GetComponent<Rigidbody2D>();
 
-            // Добавляем силу дробинке
             if (rb != null)
             {
                 rb.AddForce(pellet.transform.up * bulletForce, ForceMode2D.Impulse);
             }
 
-            // Настраиваем урон дробинки
             EnemyBullet bulletScript = pellet.GetComponent<EnemyBullet>();
             if (bulletScript != null)
             {
-                // Уменьшаем урон каждой дробинки
                 bulletScript.damage = bulletScript.damage / 2;
             }
         }
 
-        // Воспроизводим звук выстрела
         PlayShootSound();
     }
 
@@ -108,14 +97,11 @@ public class EnemyShotgunShooter : MonoBehaviour
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
-    // Визуализация зон в редакторе
     void OnDrawGizmosSelected()
     {
-        // Зона обнаружения
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        // Зона атаки
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }

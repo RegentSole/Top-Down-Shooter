@@ -134,7 +134,6 @@ public abstract class EnemyAI : MonoBehaviour
         }
     }
 
-    // Абстрактные методы для реализации в дочерних классах
     protected abstract void InitializeAI();
     protected abstract void IdleBehavior();
     protected abstract void PatrolBehavior();
@@ -148,7 +147,6 @@ public abstract class EnemyAI : MonoBehaviour
         {
             rb.velocity = movement * moveSpeed;
 
-            // Поворот в направлении движения
             float angle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg;
             Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.forward);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
@@ -179,22 +177,17 @@ public abstract class EnemyAI : MonoBehaviour
 
     protected virtual void Die()
     {
-        // Базовая логика смерти
         Destroy(gameObject);
     }
 
-    // Визуализация в редакторе
     void OnDrawGizmosSelected()
     {
-        // Зона обнаружения
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        // Зона атаки
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
 
-        // Направление к игроку
         if (player != null)
         {
             Gizmos.color = playerDetected ? Color.green : Color.white;
@@ -204,15 +197,12 @@ public abstract class EnemyAI : MonoBehaviour
 
     protected virtual void OnDrawGizmos()
     {
-        // Зона обнаружения
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        // Зона атаки
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
 
-        // Направление к игроку
         if (player != null)
         {
             Gizmos.color = playerDetected ? Color.green : Color.white;

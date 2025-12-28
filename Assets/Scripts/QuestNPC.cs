@@ -62,7 +62,6 @@ public class QuestNPC : MonoBehaviour
             interactionHint.SetActive(false);
         }
 
-        // Инициализируем эффект растворения для двери
         if (exitDoor != null && useDissolveForDoor)
         {
             doorDissolveEffect = exitDoor.GetComponent<DissolveEffect>();
@@ -79,7 +78,6 @@ public class QuestNPC : MonoBehaviour
             }
         }
 
-        // Инициализируем индикатор завершения квеста
         if (questCompleteIndicator != null)
         {
             questCompleteIndicator.SetActive(false);
@@ -113,10 +111,8 @@ public class QuestNPC : MonoBehaviour
             dialoguePanel.SetActive(true);
         }
 
-        // Получаем менеджер ключей игрока
         keyManager = FindObjectOfType<PlayerKeyManager>();
 
-        // Проверяем, выполнено ли задание
         if (keyManager != null && keyManager.keysCollected >= requiredKeys && !questCompleted)
         {
             CompleteQuest();
@@ -170,28 +166,23 @@ public class QuestNPC : MonoBehaviour
         StopAllCoroutines();
         dialogueText.text = completedQuestText;
 
-        // Открываем дверь с эффектом растворения
         OpenDoorWithDissolve();
 
-        // Воспроизводим звук завершения
         if (completeSound != null)
         {
             audioSource.PlayOneShot(completeSound);
         }
 
-        // Показываем индикатор завершения квеста
         if (questCompleteIndicator != null)
         {
             questCompleteIndicator.SetActive(true);
         }
 
-        // Отключаем подсказку взаимодействия
         if (interactionHint != null)
         {
             interactionHint.SetActive(false);
         }
 
-        // Отключаем NPC после завершения квеста (опционально)
         if (disableAfterQuest)
         {
             StartCoroutine(DisableNPCAfterDelay(3f));
@@ -202,25 +193,20 @@ public class QuestNPC : MonoBehaviour
 
     void OpenDoorWithDissolve()
     {
-        // Эффект при открытии двери
         if (doorOpenEffect != null)
         {
             Instantiate(doorOpenEffect, exitDoor.transform.position, Quaternion.identity);
         }
 
-        // Звук открытия двери
         if (doorOpenSound != null)
         {
             AudioSource.PlayClipAtPoint(doorOpenSound, exitDoor.transform.position, 1f);
         }
 
-        // Применяем эффект растворения к двери
         if (useDissolveForDoor && doorDissolveEffect != null)
         {
-            //doorDissolveEffect.dissolveColor = doorDissolveColor;
             doorDissolveEffect.StartDissolve();
 
-            // Отключаем коллайдер двери после начала растворения
             Collider2D doorCollider = exitDoor.GetComponent<Collider2D>();
             if (doorCollider != null)
             {
@@ -254,10 +240,8 @@ public class QuestNPC : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
-        // Завершаем диалог
         EndDialogue();
 
-        // Отключаем компонент
         this.enabled = false;
 
         // Меняем спрайт NPC (опционально)
@@ -306,7 +290,6 @@ public class QuestNPC : MonoBehaviour
         }
     }
 
-    // Метод для принудительного завершения квеста (например, для тестирования)
     public void ForceCompleteQuest()
     {
         if (!questCompleted)
@@ -315,19 +298,16 @@ public class QuestNPC : MonoBehaviour
         }
     }
 
-    // Метод для проверки статуса квеста
     public bool IsQuestCompleted()
     {
         return questCompleted;
     }
 
-    // Визуализация радиуса взаимодействия в редакторе
     void OnDrawGizmosSelected()
     {
         Gizmos.color = questCompleted ? Color.gray : Color.blue;
         Gizmos.DrawWireSphere(transform.position, 1.5f);
 
-        // Показываем связь с дверью
         if (exitDoor != null)
         {
             Gizmos.color = Color.yellow;

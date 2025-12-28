@@ -28,21 +28,18 @@ public class MainMenuManager : MonoBehaviour
 
     void Start()
     {
-        // Настройка курсора
         if (showCursor)
         {
             Cursor.visible = true;
             Cursor.lockState = cursorLockMode;
         }
 
-        // Инициализация аудио
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
 
-        // Проигрываем фоновую музыку
         if (menuMusic != null)
         {
             audioSource.clip = menuMusic;
@@ -50,36 +47,29 @@ public class MainMenuManager : MonoBehaviour
             audioSource.Play();
         }
 
-        // Настройка кнопок
         SetupButtons();
 
-        // Проверяем, существует ли указанная сцена
         CheckScenes();
     }
 
     void SetupButtons()
     {
-        // Кнопка Play
         if (playButton != null)
         {
             playButton.onClick.RemoveAllListeners();
             playButton.onClick.AddListener(PlayGame);
 
-            // Добавляем горячую клавишу Enter
             StartCoroutine(WaitForEnterKey());
         }
 
-        // Кнопка Leave/Quit
         if (leaveButton != null)
         {
             leaveButton.onClick.RemoveAllListeners();
             leaveButton.onClick.AddListener(QuitGame);
 
-            // Добавляем горячую клавишу Escape
             StartCoroutine(WaitForEscapeKey());
         }
 
-        // Опциональная кнопка настроек
         if (settingsButton != null)
         {
             settingsButton.onClick.RemoveAllListeners();
@@ -89,7 +79,6 @@ public class MainMenuManager : MonoBehaviour
 
     void CheckScenes()
     {
-        // Проверяем, существует ли сцена с игрой
         bool sceneExists = false;
         for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
         {
@@ -146,20 +135,16 @@ public class MainMenuManager : MonoBehaviour
 
     public void PlayGame()
     {
-        // Проигрываем звук нажатия
         PlayButtonSound();
 
-        // Отключаем кнопки, чтобы предотвратить множественные нажатия
         if (playButton != null) playButton.interactable = false;
         if (leaveButton != null) leaveButton.interactable = false;
 
-        // Запускаем анимацию перехода
         if (transitionAnimator != null)
         {
             transitionAnimator.SetTrigger(fadeOutTrigger);
         }
 
-        // Загружаем игровую сцену с задержкой
         StartCoroutine(LoadGameSceneWithDelay());
     }
 
@@ -167,7 +152,6 @@ public class MainMenuManager : MonoBehaviour
     {
         yield return new WaitForSeconds(sceneTransitionDelay);
 
-        // Загружаем игровую сцену
         if (!string.IsNullOrEmpty(gameSceneName))
         {
             try
@@ -178,7 +162,6 @@ public class MainMenuManager : MonoBehaviour
             {
                 Debug.LogError($"Не удалось загрузить сцену '{gameSceneName}': {e.Message}");
 
-                // Включаем кнопки обратно при ошибке
                 if (playButton != null) playButton.interactable = true;
                 if (leaveButton != null) leaveButton.interactable = true;
             }
@@ -191,17 +174,13 @@ public class MainMenuManager : MonoBehaviour
 
     public void QuitGame()
     {
-        // Проигрываем звук нажатия
         PlayButtonSound();
 
-        // Отключаем кнопки
         if (playButton != null) playButton.interactable = false;
         if (leaveButton != null) leaveButton.interactable = false;
 
-        // Показываем сообщение о выходе
         Debug.Log("Игра закрывается...");
 
-        // Задержка перед выходом (для анимации)
         StartCoroutine(QuitWithDelay());
     }
 
@@ -209,7 +188,6 @@ public class MainMenuManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
 
-        // Выход из игры
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -232,7 +210,6 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-    // Метод для изменения громкости музыки
     public void SetMusicVolume(float volume)
     {
         if (audioSource != null)
@@ -241,7 +218,6 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-    // Метод для загрузки конкретного уровня (если у вас несколько уровней)
     public void LoadLevel(string levelName)
     {
         if (!string.IsNullOrEmpty(levelName))
@@ -251,10 +227,8 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-    // Для отладки в редакторе
     void Update()
     {
-        // Быстрые клавиши для тестирования
         if (Input.GetKeyDown(KeyCode.P))
         {
             PlayGame();

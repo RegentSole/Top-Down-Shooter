@@ -16,7 +16,6 @@ public class Pistol : Weapon
     {
         if (!CanShoot()) return;
 
-        // Выстрел
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
 
@@ -26,10 +25,8 @@ public class Pistol : Weapon
             rb.AddForce(shootDirection * bulletForce, ForceMode2D.Impulse);
         }
 
-        // Вспышка выстрела
         CreateMuzzleFlash();
 
-        // Выброс гильзы
         EjectShell();
 
         ApplyRecoil();

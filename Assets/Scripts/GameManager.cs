@@ -25,7 +25,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // Паттерн Singleton
         if (Instance == null)
         {
             Instance = this;
@@ -40,16 +39,13 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // Находим здоровье игрока
         FindPlayerHealth();
 
-        // Скрываем панель Game Over
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(false);
         }
 
-        // Устанавливаем текст
         if (gameOverText != null)
         {
             gameOverText.text = gameOverMessage;
@@ -70,7 +66,6 @@ public class GameManager : MonoBehaviour
     {
         if (!isGameOver) return;
 
-        // Обработка ввода после Game Over
         if (Input.GetKeyDown(KeyCode.R))
         {
             RestartGame();
@@ -90,8 +85,6 @@ public class GameManager : MonoBehaviour
             playerHealth = player.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
-                // Подписываемся на событие смерти игрока
-                // Для этого модифицируем PlayerHealth (см. ниже)
             }
         }
 
@@ -107,16 +100,13 @@ public class GameManager : MonoBehaviour
 
         isGameOver = true;
 
-        // Запускаем отложенный показ панели
         StartCoroutine(ShowGameOverPanel());
 
-        // Пауза игры
         if (pauseTimeOnGameOver)
         {
             Time.timeScale = 0f;
         }
 
-        // Отключаем управление игроком (опционально)
         DisablePlayerControls();
 
         Debug.Log("GAME OVER");
@@ -124,14 +114,12 @@ public class GameManager : MonoBehaviour
 
     private System.Collections.IEnumerator ShowGameOverPanel()
     {
-        // Небольшая задержка перед показом панели
         yield return new WaitForSecondsRealtime(gameOverDelay);
 
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
 
-            // Анимация появления (опционально)
             CanvasGroup canvasGroup = gameOverPanel.GetComponent<CanvasGroup>();
             if (canvasGroup != null)
             {
@@ -154,7 +142,6 @@ public class GameManager : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            // Отключаем скрипты управления
             MonoBehaviour[] scripts = player.GetComponents<MonoBehaviour>();
             foreach (var script in scripts)
             {
@@ -164,7 +151,6 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            // Отключаем вращение камеры, если есть
             Camera mainCamera = Camera.main;
             if (mainCamera != null)
             {
@@ -202,14 +188,11 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
-        // Возвращаем нормальную скорость времени
         Time.timeScale = 1f;
 
-        // Перезагружаем текущую сцену
         Scene currentScene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(currentScene.name);
 
-        // Сброс состояния
         isGameOver = false;
 
         Debug.Log("Игра перезапущена");
@@ -217,10 +200,8 @@ public class GameManager : MonoBehaviour
 
     public void LeaveGame()
     {
-        // Возвращаем нормальную скорость времени
         Time.timeScale = 1f;
 
-        // Выход в главное меню или из игры
         if (!string.IsNullOrEmpty(mainMenuScene))
         {
             try
@@ -235,10 +216,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // Выход из игры
             Application.Quit();
 
-            // Для тестирования в редакторе
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
@@ -252,13 +231,11 @@ public class GameManager : MonoBehaviour
         return isGameOver;
     }
 
-    // Метод для принудительной установки Game Over
     public void ForceGameOver()
     {
         GameOver();
     }
 
-    // Обработка смены сцены
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         FindPlayerHealth();

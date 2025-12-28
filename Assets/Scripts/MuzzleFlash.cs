@@ -15,7 +15,6 @@ public class MuzzleFlash : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         flashLight = GetComponent<Light>();
 
-        // Гарантируем, что компоненты активны
         if (spriteRenderer != null)
         {
             spriteRenderer.enabled = true;
@@ -26,7 +25,6 @@ public class MuzzleFlash : MonoBehaviour
             flashLight.enabled = true;
         }
 
-        // Уничтожаем через время
         Destroy(gameObject, flashDuration);
     }
 
@@ -35,18 +33,14 @@ public class MuzzleFlash : MonoBehaviour
         timer += Time.deltaTime;
         float progress = timer / flashDuration;
 
-        // Плавное исчезновение для спрайта
         if (spriteRenderer != null)
         {
             Color color = spriteRenderer.color;
             color.a = 1f - progress;
             spriteRenderer.color = color;
 
-            // Не меняем масштаб - оставляем как есть
-            // transform.localScale = Vector3.one * (1f - progress * 0.3f);
         }
 
-        // Плавное исчезновение для света
         if (flashLight != null && useLight)
         {
             flashLight.intensity *= (1f - progress);

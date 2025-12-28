@@ -21,7 +21,6 @@ public class FloatingHint : MonoBehaviour
         startPosition = transform.localPosition;
         textMesh = GetComponentInChildren<TextMeshProUGUI>();
 
-        // Ищем главную камеру
         if (Camera.main != null)
         {
             playerCamera = Camera.main.transform;
@@ -30,23 +29,19 @@ public class FloatingHint : MonoBehaviour
 
     void Update()
     {
-        // Плавающая анимация
         float newY = startPosition.y + Mathf.Sin(Time.time * floatSpeed) * floatHeight;
         transform.localPosition = new Vector3(startPosition.x, newY, startPosition.z);
 
-        // Вращение
         if (rotationSpeed > 0)
         {
             transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
         }
 
-        // Поворот к камере
         if (faceCamera && playerCamera != null)
         {
             transform.LookAt(transform.position + playerCamera.forward);
         }
 
-        // Плавное появление/исчезание при приближении игрока
         if (textMesh != null && playerCamera != null)
         {
             float distance = Vector3.Distance(transform.position, playerCamera.position);

@@ -23,14 +23,12 @@ public class EnemyContactDamage : MonoBehaviour
 
     private void Start()
     {
-        // Автоматически определяем слой игрока
         if (playerLayer.value == 0)
         {
             playerLayer = LayerMask.GetMask("Player");
         }
     }
 
-    // Вариант через триггер
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!useTrigger) return;
@@ -41,7 +39,6 @@ public class EnemyContactDamage : MonoBehaviour
         }
     }
 
-    // Вариант через физическое столкновение
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (useTrigger) return;
@@ -54,11 +51,9 @@ public class EnemyContactDamage : MonoBehaviour
 
     private void ProcessDamage(GameObject player)
     {
-        // Проверяем кулдаун
         if (Time.time - lastDamageTime < damageCooldown)
             return;
 
-        // Получаем компонент здоровья игрока
         if (playerHealth == null || playerHealth.gameObject != player)
         {
             playerHealth = player.GetComponent<PlayerHealth>();
@@ -66,14 +61,11 @@ public class EnemyContactDamage : MonoBehaviour
 
         if (playerHealth != null)
         {
-            // Наносим урон
             playerHealth.TakeDamage(damageAmount);
             lastDamageTime = Time.time;
 
-            // Визуальные эффекты
             PlayHitEffects(player.transform.position);
 
-            // Отталкивание
             if (knockback)
             {
                 ApplyKnockback(player);
@@ -88,7 +80,6 @@ public class EnemyContactDamage : MonoBehaviour
         Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
         if (playerRb != null)
         {
-            // Направление от врага к игроку
             Vector2 direction = (player.transform.position - transform.position).normalized;
             playerRb.AddForce(direction * knockbackForce, ForceMode2D.Impulse);
         }
@@ -96,20 +87,17 @@ public class EnemyContactDamage : MonoBehaviour
 
     private void PlayHitEffects(Vector3 position)
     {
-        // Эффект попадания
         if (hitEffectPrefab != null)
         {
             Instantiate(hitEffectPrefab, position, Quaternion.identity);
         }
 
-        // Звук
         if (hitSound != null)
         {
             AudioSource.PlayClipAtPoint(hitSound, position, soundVolume);
         }
     }
 
-    // Для непрерывного урона при касании
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (useTrigger) return;
@@ -130,7 +118,6 @@ public class EnemyContactDamage : MonoBehaviour
         }
     }
 
-    // Визуализация зоны урона в редакторе
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

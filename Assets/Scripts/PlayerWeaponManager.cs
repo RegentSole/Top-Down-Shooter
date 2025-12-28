@@ -33,7 +33,6 @@ public class PlayerWeaponManager : MonoBehaviour
 
     void Update()
     {
-        // Переключение оружия колесиком мыши
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
         {
@@ -41,19 +40,16 @@ public class PlayerWeaponManager : MonoBehaviour
             SwitchWeapon(currentWeaponIndex + direction);
         }
 
-        // Переключение оружия цифровыми клавишами
         if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchWeapon(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchWeapon(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchWeapon(2);
 
-        // Перезарядка
         if (Input.GetKeyDown(KeyCode.R))
         {
             weapons[currentWeaponIndex].Reload();
             UpdateUI();
         }
 
-        // Стрельба
         if (Input.GetButton("Fire1"))
         {
             if (weapons[currentWeaponIndex] is Automat)
@@ -82,7 +78,6 @@ public class PlayerWeaponManager : MonoBehaviour
         currentWeaponIndex = newIndex;
         weapons[currentWeaponIndex].SetVisible(true);
 
-        // Воспроизводим звук ЭТОГО оружия
         weapons[currentWeaponIndex].PlayEquipSound();
 
         UpdateUI();
@@ -122,7 +117,6 @@ public class PlayerWeaponManager : MonoBehaviour
                     weapons[i].ammo = Mathf.Min(weapons[i].ammo + 30, weapons[i].maxAmmo);
                 }
 
-                // Воспроизводим звук при подборе оружия
                 PlayWeaponSwitchSound();
                 SwitchWeapon(i);
 

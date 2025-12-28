@@ -19,13 +19,11 @@ public class HealEffect : MonoBehaviour
 
     void PlayHealEffect()
     {
-        // Запускаем частицы
         if (healParticles != null)
         {
             healParticles.Emit(healParticleCount);
         }
 
-        // Запускаем свет (если есть)
         if (healLight != null)
         {
             StartCoroutine(AnimateLight());
@@ -43,7 +41,6 @@ public class HealEffect : MonoBehaviour
             timer += Time.deltaTime;
             float progress = timer / lightDuration;
 
-            // Плавное затухание света
             healLight.intensity = Mathf.Lerp(lightIntensity, 0f, progress);
 
             yield return null;

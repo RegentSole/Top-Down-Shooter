@@ -87,7 +87,6 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log("Player died!");
 
-        // Визуальные эффекты смерти
         if (deathEffectPrefab != null)
         {
             Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
@@ -98,21 +97,18 @@ public class PlayerHealth : MonoBehaviour
             AudioSource.PlayClipAtPoint(deathSound, transform.position, 1f);
         }
 
-        // Отключаем спрайт игрока
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
         {
             spriteRenderer.enabled = false;
         }
 
-        // Отключаем коллайдер
         Collider2D collider = GetComponent<Collider2D>();
         if (collider != null)
         {
             collider.enabled = false;
         }
 
-        // Отключаем управление
         MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
         foreach (var script in scripts)
         {
@@ -122,7 +118,6 @@ public class PlayerHealth : MonoBehaviour
             }
         }
 
-        // Вызываем Game Over
         if (triggerGameOver && GameManager.Instance != null)
         {
             GameManager.Instance.GameOver();
@@ -133,7 +128,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    // Для отладки
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.H) && !isDead)
@@ -145,25 +139,21 @@ public class PlayerHealth : MonoBehaviour
             Heal(25f);
         }
 
-        // Тест Game Over
         if (Input.GetKeyDown(KeyCode.G) && !isDead)
         {
             Die();
         }
     }
 
-    // Свойства для доступа из других скриптов
     public float CurrentHealth => currentHealth;
     public float HealthPercentage => currentHealth / maxHealth;
     public bool IsDead => isDead;
 
-    // Метод для возрождения (если понадобится)
     public void Revive(float healthPercent = 1f)
     {
         isDead = false;
         currentHealth = maxHealth * Mathf.Clamp01(healthPercent);
 
-        // Включаем компоненты
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
         {

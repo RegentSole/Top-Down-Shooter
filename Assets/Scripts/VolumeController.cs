@@ -16,14 +16,11 @@ public class SimpleVolumeSlider : MonoBehaviour
 
         if (volumeSlider != null)
         {
-            // Загружаем сохраненное значение
             float savedVolume = PlayerPrefs.GetFloat(saveKey, defaultVolume);
             volumeSlider.value = savedVolume;
 
-            // Применяем начальную громкость
             ApplyVolume(savedVolume);
 
-            // Добавляем обработчик
             volumeSlider.onValueChanged.AddListener(OnSliderChanged);
         }
     }
@@ -32,17 +29,14 @@ public class SimpleVolumeSlider : MonoBehaviour
     {
         ApplyVolume(value);
 
-        // Сохраняем
         PlayerPrefs.SetFloat(saveKey, value);
         PlayerPrefs.Save();
     }
 
     private void ApplyVolume(float volume)
     {
-        // Устанавливаем громкость для всех AudioListener
         AudioListener.volume = volume;
 
-        // Дополнительно для всех AudioSource (если нужно)
         AudioSource[] allSources = FindObjectsOfType<AudioSource>(true);
         foreach (AudioSource source in allSources)
         {

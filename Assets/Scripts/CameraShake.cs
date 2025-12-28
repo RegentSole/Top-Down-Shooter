@@ -33,13 +33,11 @@ public class CameraShake : MonoBehaviour
     {
         if (isShaking && shakeTimer > 0)
         {
-            // Случайное смещение в локальных координатах
             transform.localPosition = originalPosition + Random.insideUnitSphere * shakeMagnitude;
             shakeTimer -= Time.deltaTime;
         }
         else if (isShaking && shakeTimer <= 0)
         {
-            // Возврат к исходной позиции
             transform.localPosition = originalPosition;
             isShaking = false;
         }

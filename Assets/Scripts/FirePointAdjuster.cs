@@ -34,22 +34,18 @@ public class WeaponPointsFlipFix : MonoBehaviour
 
         bool isFlipped = weaponSprite.flipY;
 
-        // Обновляем только при изменении состояния flip
         if (isFlipped != wasFlipped)
         {
-            // Корректируем firePoint
             if (firePoint != null)
             {
                 firePoint.localPosition = isFlipped ? firePointLeft : firePointRight;
             }
 
-            // Корректируем muzzleFlashPoint
             if (muzzleFlashPoint != null)
             {
                 muzzleFlashPoint.localPosition = isFlipped ? muzzleLeft : muzzleRight;
             }
 
-            // Корректируем ejectionPoint
             if (ejectionPoint != null)
             {
                 ejectionPoint.localPosition = isFlipped ? ejectionLeft : ejectionRight;
@@ -59,7 +55,6 @@ public class WeaponPointsFlipFix : MonoBehaviour
         }
     }
 
-    // Визуализация в редакторе
     void OnDrawGizmosSelected()
     {
         if (!showGizmos) return;

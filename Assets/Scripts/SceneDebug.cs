@@ -20,7 +20,6 @@ public class SceneDebug : MonoBehaviour
 
     void Update()
     {
-        // Медленно двигаем врага чтобы увидеть его
         transform.position += Vector3.up * Mathf.Sin(Time.time) * 0.01f;
     }
 }

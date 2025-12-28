@@ -57,7 +57,6 @@ public abstract class Weapon : MonoBehaviour
             spriteRenderer.sprite = weaponSprite;
         }
 
-        // Устанавливаем начальную позицию
         transform.localPosition = equippedPosition;
     }
 
@@ -65,7 +64,6 @@ public abstract class Weapon : MonoBehaviour
     {
         if (shootSound != null)
         {
-            // Простой способ, который всегда работает
             AudioSource.PlayClipAtPoint(shootSound, transform.position, volume);
             Debug.Log("Sound played via PlayClipAtPoint");
         }
@@ -96,25 +94,19 @@ public abstract class Weapon : MonoBehaviour
         }
     }
 
-    // Метод для обновления переворота оружия
     protected virtual void UpdateWeaponFlip()
     {
         if (Camera.main == null) return;
 
-        // Получаем позицию мыши
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
 
-        // Определяем направление к мыши
         Vector3 direction = mousePos - transform.position;
 
-        // Вычисляем угол
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        // Применяем переворот спрайта
         if (spriteRenderer != null)
         {
-            // Переворачиваем спрайт, если оружие направлено влево
             spriteRenderer.flipY = Mathf.Abs(angle) > 90f;
         }
     }
@@ -178,17 +170,14 @@ public abstract class Weapon : MonoBehaviour
     {
         if (shellPrefab == null || ejectionPoint == null) return;
 
-        // Создаем гильзу
         GameObject shell = Instantiate(shellPrefab, ejectionPoint.position, ejectionPoint.rotation);
         Rigidbody2D shellRb = shell.GetComponent<Rigidbody2D>();
 
         if (shellRb != null)
         {
-            // Случайное направление выброса
             Vector2 ejectionDirection = Quaternion.Euler(0, 0, Random.Range(-30f, 30f)) * -transform.right;
             shellRb.AddForce(ejectionDirection * ejectionForce, ForceMode2D.Impulse);
 
-            // Случайное вращение
             shellRb.AddTorque(Random.Range(-ejectionTorque, ejectionTorque));
         }
     }
@@ -197,23 +186,18 @@ public abstract class Weapon : MonoBehaviour
     {
         if (muzzleFlashPrefab == null || muzzleFlashPoint == null) return;
 
-        // Запоминаем текущую позицию и поворот
         Vector3 flashPosition = muzzleFlashPoint.position;
         Quaternion flashRotation = muzzleFlashPoint.rotation;
 
-        // Создаем вспышку в запомненной позиции
         GameObject flash = Instantiate(muzzleFlashPrefab, flashPosition, flashRotation);
 
-        // Запускаем корутину для микро-корректировки позиции
         StartCoroutine(AdjustFlashPosition(flash, muzzleFlashPoint));
     }
 
     private System.Collections.IEnumerator AdjustFlashPosition(GameObject flash, Transform target)
     {
-        // Ждем до конца кадра, чтобы все трансформы обновились
         yield return new WaitForEndOfFrame();
 
-        // Корректируем позицию
         if (flash != null && target != null)
         {
             flash.transform.position = target.position;
@@ -221,7 +205,6 @@ public abstract class Weapon : MonoBehaviour
         }
     }
 
-    // Добавьте в класс Weapon
 
     protected virtual void ApplyRecoil()
     {
@@ -246,7 +229,6 @@ public abstract class Weapon : MonoBehaviour
         Vector3 originalPosition = transform.localPosition;
         Vector3 recoilPosition = originalPosition - new Vector3(recoilAmount, 0, 0);
 
-        // Отдача
         float elapsedTime = 0f;
         while (elapsedTime < 0.05f)
         {
@@ -255,7 +237,6 @@ public abstract class Weapon : MonoBehaviour
             yield return null;
         }
 
-        // Возврат
         elapsedTime = 0f;
         while (elapsedTime < 0.1f)
         {
@@ -267,7 +248,6 @@ public abstract class Weapon : MonoBehaviour
         transform.localPosition = originalPosition;
     }
 
-    // Вызывайте ApplyRecoil() в каждом Shoot после CreateMuzzleFlash()
 
     public void PlayEquipSound()
     {

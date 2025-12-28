@@ -44,22 +44,18 @@ public class InteractZoneWithDissolve : MonoBehaviour
 
     void Start()
     {
-        // Настройка UI
         if (interactionUI != null)
         {
             interactionUI.SetActive(false);
         }
 
-        // Настройка текста
         if (interactionTextUI != null)
         {
             interactionTextUI.text = interactionText;
         }
 
-        // Проверяем и настраиваем объект
         if (objectToDissolve != null)
         {
-            // Получаем SpriteRenderer для подсветки
             if (useHighlight)
             {
                 spriteRenderer = objectToDissolve.GetComponent<SpriteRenderer>();
@@ -69,24 +65,20 @@ public class InteractZoneWithDissolve : MonoBehaviour
                 }
             }
 
-            // Получаем коллайдер объекта
             objectCollider = objectToDissolve.GetComponent<Collider2D>();
 
-            // Проверяем наличие DissolveEffect или добавляем его
             dissolveEffect = objectToDissolve.GetComponent<DissolveEffect>();
             if (dissolveEffect == null)
             {
                 dissolveEffect = objectToDissolve.AddComponent<DissolveEffect>();
             }
 
-            // Настраиваем DissolveEffect
             if (dissolveEffect != null)
             {
                 dissolveEffect.dissolveDuration = dissolveDuration;
                 dissolveEffect.startDelay = dissolveDelay;
                 dissolveEffect.destroyOnComplete = destroyObjectAfterDissolve;
 
-                // Автоматически находим рендерер
                 if (dissolveEffect.objectRenderer == null)
                 {
                     dissolveEffect.objectRenderer = objectToDissolve.GetComponent<Renderer>();
@@ -103,13 +95,11 @@ public class InteractZoneWithDissolve : MonoBehaviour
     {
         if (!isPlayerInZone || hasInteracted) return;
 
-        // Проверяем нажатие E
         if (Input.GetKeyDown(KeyCode.E))
         {
             Interact();
         }
 
-        // Подсветка объекта при нахождении в зоне
         if (useHighlight && spriteRenderer != null)
         {
             spriteRenderer.color = Color.Lerp(originalColor, highlightColor, Mathf.PingPong(Time.time, 1f));
@@ -122,43 +112,35 @@ public class InteractZoneWithDissolve : MonoBehaviour
 
         hasInteracted = true;
 
-        // Проигрываем звук
         if (interactSound != null)
         {
             AudioSource.PlayClipAtPoint(interactSound, transform.position, soundVolume);
         }
 
-        // Запускаем эффекты частиц
         if (interactionParticles != null)
         {
             interactionParticles.Play();
         }
 
-        // Скрываем UI
         if (interactionUI != null)
         {
             interactionUI.SetActive(false);
         }
 
-        // Отключаем подсветку
         if (useHighlight && spriteRenderer != null)
         {
             spriteRenderer.color = originalColor;
         }
 
-        // Отключаем коллайдер объекта (чтобы нельзя было взаимодействовать повторно)
         if (objectCollider != null)
         {
             objectCollider.enabled = false;
         }
 
-        // Запускаем эффект растворения
         StartCoroutine(StartDissolveEffect());
 
-        // Вызываем событие
         OnInteracted?.Invoke();
 
-        // Отключаем зону взаимодействия
         if (disableZoneAfterInteraction)
         {
             GetComponent<Collider2D>().enabled = false;
@@ -170,10 +152,8 @@ public class InteractZoneWithDissolve : MonoBehaviour
 
     private System.Collections.IEnumerator StartDissolveEffect()
     {
-        // Небольшая задержка перед началом растворения
         yield return new WaitForSeconds(dissolveDelay);
 
-        // Запускаем эффект растворения
         if (dissolveEffect != null)
         {
             if (useCustomDissolveColor)
@@ -185,10 +165,8 @@ public class InteractZoneWithDissolve : MonoBehaviour
                 dissolveEffect.StartDissolve();
             }
 
-            // Ждем завершения эффекта
             yield return new WaitForSeconds(dissolveDuration + 0.1f);
 
-            // Вызываем событие завершения
             OnDissolveComplete?.Invoke();
         }
         else
@@ -206,7 +184,6 @@ public class InteractZoneWithDissolve : MonoBehaviour
         {
             isPlayerInZone = true;
 
-            // Показываем UI
             if (interactionUI != null)
             {
                 interactionUI.SetActive(true);
@@ -224,13 +201,11 @@ public class InteractZoneWithDissolve : MonoBehaviour
         {
             isPlayerInZone = false;
 
-            // Скрываем UI
             if (interactionUI != null)
             {
                 interactionUI.SetActive(false);
             }
 
-            // Возвращаем исходный цвет
             if (useHighlight && spriteRenderer != null)
             {
                 spriteRenderer.color = originalColor;
@@ -240,13 +215,11 @@ public class InteractZoneWithDissolve : MonoBehaviour
         }
     }
 
-    // Метод для принудительного взаимодействия из других скриптов
     public void ForceInteract()
     {
         Interact();
     }
 
-    // Метод для сброса состояния
     public void ResetInteraction()
     {
         hasInteracted = false;
@@ -256,41 +229,34 @@ public class InteractZoneWithDissolve : MonoBehaviour
         {
             objectToDissolve.SetActive(true);
 
-            // Включаем коллайдер
             if (objectCollider != null)
             {
                 objectCollider.enabled = true;
             }
 
-            // Сбрасываем эффект растворения
             if (dissolveEffect != null)
             {
                 dissolveEffect.ResetDissolve();
             }
         }
 
-        // Включаем зону
         GetComponent<Collider2D>().enabled = true;
         this.enabled = true;
 
-        // Скрываем UI
         if (interactionUI != null)
         {
             interactionUI.SetActive(false);
         }
     }
 
-    // Для отладки в редакторе
     void OnDrawGizmos()
     {
-        // Рисуем зону триггера
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
         if (collider != null && collider.enabled)
         {
             Gizmos.color = new Color(0, 1, 0, 0.3f);
             Gizmos.DrawCube(transform.position + (Vector3)collider.offset, collider.size);
 
-            // Показываем связь с объектом
             if (objectToDissolve != null)
             {
                 Gizmos.color = Color.yellow;

@@ -15,7 +15,6 @@ public class Shotgun : Weapon
     {
         if (!CanShoot()) return;
 
-        // Выстрел
         for (int i = 0; i < pellets; i++)
         {
             GameObject pellet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
@@ -37,7 +36,6 @@ public class Shotgun : Weapon
 
         CreateMuzzleFlash();
 
-        // Выброс гильзы (только одна за весь заряд дроби)
         EjectShell();
 
         ApplyRecoil();

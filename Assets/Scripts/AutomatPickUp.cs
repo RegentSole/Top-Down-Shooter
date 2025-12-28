@@ -14,13 +14,11 @@ public class AutomatPickup : MonoBehaviour
             {
                 weaponManager.PickupWeapon("Automat");
 
-                // Создаем эффект подбора
                 if (pickupEffect != null)
                 {
                     Instantiate(pickupEffect, transform.position, Quaternion.identity);
                 }
 
-                // Уничтожаем предмет подбора
                 Destroy(gameObject);
             }
         }

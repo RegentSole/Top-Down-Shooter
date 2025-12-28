@@ -33,11 +33,9 @@ public class AnimatedExitDoor : MonoBehaviour
 
     void Start()
     {
-        // Сохраняем начальные позиции дверей
         leftDoorStartPos = leftDoor.position;
         rightDoorStartPos = rightDoor.position;
 
-        // Рассчитываем позиции открытия
         leftDoorOpenPos = leftDoorStartPos + Vector3.left * openDistance;
         rightDoorOpenPos = rightDoorStartPos + Vector3.right * openDistance;
 
@@ -131,7 +129,6 @@ public class AnimatedExitDoor : MonoBehaviour
         Debug.Log("Doors closed");
     }
 
-    // Вызывается когда игрок проходит через дверь
     public void OnPlayerPassed()
     {
         if (!playerHasPassed && isOpen)
@@ -141,7 +138,6 @@ public class AnimatedExitDoor : MonoBehaviour
         }
     }
 
-    // Для отладки
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.O))
@@ -154,7 +150,6 @@ public class AnimatedExitDoor : MonoBehaviour
         }
     }
 
-    // Визуализация в редакторе
     void OnDrawGizmos()
     {
         if (leftDoor != null && rightDoor != null)

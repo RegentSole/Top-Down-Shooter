@@ -32,7 +32,6 @@ public class RangedEnemyAI : EnemyAI
 
     protected override void PatrolBehavior()
     {
-        // Простое патрулирование по небольшой области
         if (Random.Range(0f, 1f) < 0.01f)
         {
             movement = Random.insideUnitCircle.normalized;
@@ -49,7 +48,6 @@ public class RangedEnemyAI : EnemyAI
         if (inCover)
         {
             movement = Vector2.zero;
-            // Стрельба из укрытия
             if (Time.time >= nextFireTime && playerDetected)
             {
                 AttackBehavior();
@@ -57,7 +55,6 @@ public class RangedEnemyAI : EnemyAI
         }
         else
         {
-            // Движение к игроку, но сохранение дистанции
             Vector2 directionToPlayer = (player.position - transform.position).normalized;
             float desiredDistance = attackRange * 0.8f;
 
@@ -76,10 +73,8 @@ public class RangedEnemyAI : EnemyAI
     {
         movement = Vector2.zero;
 
-        // Точное прицеливание
         Vector2 aimDirection = (player.position - firePoint.position).normalized;
 
-        // Добавляем небольшую случайность для реалистичности
         if (Random.Range(0f, 1f) > aimAccuracy)
         {
             aimDirection = Quaternion.Euler(0, 0, Random.Range(-5f, 5f)) * aimDirection;
@@ -91,7 +86,6 @@ public class RangedEnemyAI : EnemyAI
             nextFireTime = Time.time + 1f / fireRate;
         }
 
-        // Поворот к игроку
         float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
@@ -114,7 +108,6 @@ public class RangedEnemyAI : EnemyAI
             rb.AddForce(direction * bulletForce, ForceMode2D.Impulse);
         }
 
-        // Можно добавить звук выстрела, вспышку и т.д.
     }
 
     void FindCover()
@@ -123,7 +116,6 @@ public class RangedEnemyAI : EnemyAI
 
         if (coverSpots.Length > 0)
         {
-            // Выбираем ближайшее укрытие с хорошей видимостью игрока
             Collider2D bestCover = null;
             float bestScore = 0f;
 
@@ -132,7 +124,6 @@ public class RangedEnemyAI : EnemyAI
                 Vector3 coverPos = cover.transform.position;
                 Vector3 toPlayer = player.position - coverPos;
 
-                // Проверяем видимость из-за укрытия
                 RaycastHit2D hit = Physics2D.Raycast(coverPos, toPlayer.normalized, toPlayer.magnitude, obstacleLayers);
                 if (hit.collider != null && hit.collider.CompareTag("Player"))
                 {
@@ -158,7 +149,6 @@ public class RangedEnemyAI : EnemyAI
     {
         base.HandleStateTransitions();
 
-        // Дополнительная логика для стрелков
         if (currentState == AIState.Chase && inCover && !playerDetected)
         {
             inCover = false; // Покидаем укрытие если игрок не виден

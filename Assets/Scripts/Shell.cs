@@ -16,13 +16,11 @@ public class Shell : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // Добавляем случайное вращение
         if (rb != null)
         {
             rb.AddTorque(Random.Range(-50f, 50f));
         }
 
-        // Уничтожаем через время
         Destroy(gameObject, lifetime);
     }
 
@@ -30,7 +28,6 @@ public class Shell : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        // Начинаем исчезать за fadeTime до уничтожения
         if (!isFading && timer >= lifetime - fadeTime)
         {
             StartFading();
@@ -61,12 +58,10 @@ public class Shell : MonoBehaviour
         }
     }
 
-    // Останавливаем физику при столкновении с полом
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (rb != null && collision.gameObject.CompareTag("Ground"))
         {
-            // Уменьшаем отскок
             rb.velocity *= 0.5f;
             rb.angularVelocity *= 0.5f;
         }

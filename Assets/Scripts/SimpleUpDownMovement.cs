@@ -24,11 +24,9 @@ public class SimpleUpDownMovement : MonoBehaviour
 
     void Start()
     {
-        // Сохраняем начальную позицию
         startPosition = transform.position;
         movingUp = startMovingUp;
 
-        // Если используем синус, сбрасываем таймер в зависимости от направления
         if (movementType == MovementType.Smooth)
         {
             timer = startMovingUp ? 0f : Mathf.PI;
@@ -53,44 +51,33 @@ public class SimpleUpDownMovement : MonoBehaviour
         }
     }
 
-    // Плавное синусоидальное движение
     void SmoothMovement()
     {
         timer += Time.deltaTime * moveSpeed;
 
-        // Используем синус для плавного движения вверх-вниз
         float yOffset = Mathf.Sin(timer) * moveDistance;
 
-        // Обновляем позицию
         transform.position = startPosition + new Vector3(0, yOffset, 0);
     }
 
-    // Движение вперед-назад
     void PingPongMovement()
     {
-        // Используем PingPong для движения между 0 и moveDistance
         float yOffset = Mathf.PingPong(Time.time * moveSpeed, moveDistance);
 
-        // Если начинаем движение вниз, инвертируем
         if (!startMovingUp)
         {
             yOffset = moveDistance - yOffset;
         }
 
-        // Обновляем позицию
         transform.position = startPosition + new Vector3(0, yOffset, 0);
     }
 
-    // Движение с отскоком
     void BounceMovement()
     {
-        // Определяем направление движения
         float direction = movingUp ? 1f : -1f;
 
-        // Двигаем объект
         transform.Translate(0, direction * moveSpeed * Time.deltaTime, 0);
 
-        // Проверяем границы
         float currentY = transform.position.y;
 
         if (movingUp && currentY >= startPosition.y + moveDistance)
@@ -103,10 +90,8 @@ public class SimpleUpDownMovement : MonoBehaviour
         }
     }
 
-    // Для отладки: визуализация диапазона движения в редакторе
     void OnDrawGizmosSelected()
     {
-        // Рисуем линию, показывающую диапазон движения
         Gizmos.color = Color.cyan;
         Vector3 currentPos = Application.isPlaying ? startPosition : transform.position;
 

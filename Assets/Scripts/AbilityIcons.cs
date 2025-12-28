@@ -27,7 +27,6 @@ public class AbilityIcons : MonoBehaviour
             dashCooldown = playerMovement.dashCooldown;
         }
 
-        // Скрываем overlay перезарядки в начале
         if (dashCooldownOverlay != null)
         {
             dashCooldownOverlay.fillAmount = 1;
@@ -44,7 +43,6 @@ public class AbilityIcons : MonoBehaviour
     {
         if (sprintIcon == null || playerMovement == null) return;
 
-        // Меняем цвет иконки в зависимости от состояния спринта
         sprintIcon.color = playerMovement.IsRunning ? sprintActiveColor : sprintInactiveColor;
     }
 
@@ -52,10 +50,8 @@ public class AbilityIcons : MonoBehaviour
     {
         if (dashIcon == null || dashCooldownOverlay == null || playerMovement == null) return;
 
-        // Меняем цвет иконки в зависимости от состояния перезарядки
         dashIcon.color = playerMovement.IsDashing || playerMovement.dashCooldownTimer > 0 ? dashActiveColor : dashInactiveColor;
 
-        // Обновляем заполнение перезарядки
         if (playerMovement.dashCooldownTimer > 0)
         {
             float cooldownProgress = 1 - (playerMovement.dashCooldownTimer / dashCooldown);

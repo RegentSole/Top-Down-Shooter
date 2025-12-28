@@ -42,7 +42,6 @@ public class PlayerKeyManager : MonoBehaviour
         {
             keysCollected++;
 
-            // Воспроизводим звук подбора
             if (keyPickupSound != null)
             {
                 AudioSource.PlayClipAtPoint(keyPickupSound, transform.position);
@@ -55,13 +54,11 @@ public class PlayerKeyManager : MonoBehaviour
 
     void UpdateKeyUI()
     {
-        // Текстовое отображение
         if (keysText != null)
         {
             keysText.text = $"Keys: {keysCollected}/{maxKeys}";
         }
 
-        // Иконки ключей
         if (keyIcons != null)
         {
             for (int i = 0; i < keyIcons.Length; i++)
@@ -79,7 +76,6 @@ public class PlayerKeyManager : MonoBehaviour
         return keysCollected >= maxKeys;
     }
 
-    // Для отладки
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))

@@ -64,7 +64,6 @@ public class ExitDoor : MonoBehaviour
                 audioSource.PlayOneShot(openSound);
             }
 
-            // Анимация открытия или просто отключение
             gameObject.SetActive(false);
             Debug.Log("Door opened!");
         }
@@ -76,15 +75,11 @@ public class ExitDoor : MonoBehaviour
         {
             Open();
 
-            // Здесь можно перейти на следующий уровень
             Debug.Log("Level completed!");
 
-            // Пример перехода на следующий уровень:
-            // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 
-    // Для отладки
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.U))

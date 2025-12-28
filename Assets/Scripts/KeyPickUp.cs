@@ -26,7 +26,6 @@ public class KeyPickup : MonoBehaviour
     {
         startPosition = transform.position;
 
-        // Визуальная настройка в зависимости от типа ключа
         SetKeyAppearance();
     }
 
@@ -81,22 +80,18 @@ public class KeyPickup : MonoBehaviour
     {
         isCollected = true;
 
-        // Добавляем ключ игроку
         keyManager.AddKey();
 
-        // Создаем эффект подбора
         if (pickupEffect != null)
         {
             Instantiate(pickupEffect, transform.position, Quaternion.identity);
         }
 
-        // Воспроизводим звук
         if (pickupSound != null)
         {
             AudioSource.PlayClipAtPoint(pickupSound, transform.position);
         }
 
-        // Отключаем визуальную часть
         Renderer renderer = GetComponent<Renderer>();
         if (renderer != null)
         {
@@ -109,13 +104,11 @@ public class KeyPickup : MonoBehaviour
             collider.enabled = false;
         }
 
-        // Уничтожаем объект
         Destroy(gameObject, 1f);
 
         Debug.Log($"Key collected! Type: {keyType}");
     }
 
-    // Визуализация в редакторе
     void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;

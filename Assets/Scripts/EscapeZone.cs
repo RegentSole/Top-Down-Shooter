@@ -35,16 +35,13 @@ public class EscapeZone : MonoBehaviour
 
     private void Start()
     {
-        // Находим GameManager
         gameManager = FindObjectOfType<GameManager>();
 
-        // Скрываем панель
         if (escapePanel != null)
         {
             escapePanel.SetActive(false);
         }
 
-        // Настраиваем текст
         if (escapeText != null)
         {
             escapeText.text = escapeMessage;
@@ -60,7 +57,6 @@ public class EscapeZone : MonoBehaviour
             leaveHintText.text = "L - Main Menu";
         }
 
-        // Находим здоровье игрока
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
@@ -72,7 +68,6 @@ public class EscapeZone : MonoBehaviour
     {
         if (!hasEscaped) return;
 
-        // Обработка ввода после победы
         if (Input.GetKeyDown(KeyCode.R))
         {
             RestartLevel();
@@ -83,7 +78,6 @@ public class EscapeZone : MonoBehaviour
             LeaveToMenu();
         }
 
-        // Продолжить в следующий уровень (если настроено)
         if (Input.GetKeyDown(KeyCode.N) && !string.IsNullOrEmpty(nextLevelScene))
         {
             LoadNextLevel();
@@ -102,7 +96,6 @@ public class EscapeZone : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        // Для надежности - если игрок уже в зоне
         if (!hasEscaped && other.CompareTag("Player"))
         {
             Escape();
@@ -115,32 +108,26 @@ public class EscapeZone : MonoBehaviour
 
         hasEscaped = true;
 
-        // Проигрываем эффекты
         PlayWinEffects();
 
-        // Отключаем управление игроком
         if (disablePlayerOnEscape)
         {
             DisablePlayerControls();
         }
 
-        // Пауза игры
         if (pauseTimeOnEscape)
         {
             Time.timeScale = 0f;
         }
 
-        // Показываем курсор
         if (showCursorOnEscape)
         {
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
 
-        // Показываем панель победы
         StartCoroutine(ShowEscapePanel());
 
-        // Автоматическая загрузка следующего уровня
         if (loadNextLevelAutomatically && !string.IsNullOrEmpty(nextLevelScene))
         {
             StartCoroutine(AutoLoadNextLevel());
@@ -157,7 +144,6 @@ public class EscapeZone : MonoBehaviour
         {
             escapePanel.SetActive(true);
 
-            // Анимация появления
             CanvasGroup canvasGroup = escapePanel.GetComponent<CanvasGroup>();
             if (canvasGroup != null)
             {
@@ -183,19 +169,16 @@ public class EscapeZone : MonoBehaviour
 
     private void PlayWinEffects()
     {
-        // Частицы
         if (winParticles != null)
         {
             winParticles.Play();
         }
 
-        // Звук
         if (winSound != null)
         {
             AudioSource.PlayClipAtPoint(winSound, transform.position, soundVolume);
         }
 
-        // Тряска камеры (опционально)
         CameraShake cameraShake = Camera.main?.GetComponent<CameraShake>();
         if (cameraShake != null)
         {
@@ -217,7 +200,6 @@ public class EscapeZone : MonoBehaviour
                 }
             }
 
-            // Останавливаем движение
             Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
@@ -242,10 +224,8 @@ public class EscapeZone : MonoBehaviour
 
     public void RestartLevel()
     {
-        // Восстанавливаем время
         Time.timeScale = 1f;
 
-        // Перезагружаем текущую сцену
         UnityEngine.SceneManagement.SceneManager.LoadScene(
             UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
@@ -257,7 +237,6 @@ public class EscapeZone : MonoBehaviour
         string menuScene = "MainMenu";
         if (gameManager != null)
         {
-            // Используем сцену из GameManager, если есть
             System.Reflection.FieldInfo field = typeof(GameManager).GetField("mainMenuScene",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             if (field != null)
@@ -288,7 +267,6 @@ public class EscapeZone : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(nextLevelScene);
     }
 
-    // Метод для принудительной активации победы из других скриптов
     public void ForceEscape()
     {
         if (!hasEscaped)
@@ -297,7 +275,6 @@ public class EscapeZone : MonoBehaviour
         }
     }
 
-    // Для отладки в редакторе
     private void OnDrawGizmos()
     {
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
@@ -306,7 +283,6 @@ public class EscapeZone : MonoBehaviour
             Gizmos.color = new Color(0, 1, 0, 0.3f);
             Gizmos.DrawCube(transform.position + (Vector3)collider.offset, collider.size);
 
-            // Рисуем значок победы
             Gizmos.color = Color.green;
             Vector3 center = transform.position + (Vector3)collider.offset;
             Gizmos.DrawLine(center + Vector3.left * 0.3f, center + Vector3.right * 0.3f);

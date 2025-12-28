@@ -28,7 +28,6 @@ public class HealthPickup : MonoBehaviour
     {
         startPosition = transform.position;
 
-        // Визуальная настройка в зависимости от типа аптечки
         if (spriteRenderer != null)
         {
             if (healthAmount >= 50f || isFullHeal)
@@ -70,12 +69,10 @@ public class HealthPickup : MonoBehaviour
         }
     }
 
-    // В методе Collect() HealthPickup.cs замените создание эффекта:
     void Collect(PlayerHealth playerHealth)
     {
         isCollected = true;
 
-        // Восстанавливаем здоровье игроку
         if (isFullHeal)
         {
             playerHealth.Heal(playerHealth.maxHealth);
@@ -85,21 +82,17 @@ public class HealthPickup : MonoBehaviour
             playerHealth.Heal(healthAmount);
         }
 
-        // Воспроизводим звук подбора
         PlayPickupSound();
 
-        // Создаем эффект лечения НА ИГРОКЕ
         if (pickupEffect != null)
         {
             Instantiate(pickupEffect, playerHealth.transform.position, Quaternion.identity);
         }
         else
         {
-            // Создаем базовый эффект если нет назначенного префаба
             CreateDefaultHealEffect(playerHealth.transform.position);
         }
 
-        // Отключаем визуальную часть
         if (spriteRenderer != null)
         {
             spriteRenderer.enabled = false;
@@ -110,7 +103,6 @@ public class HealthPickup : MonoBehaviour
             collider.enabled = false;
         }
 
-        // Уничтожаем объект
         Destroy(gameObject, 0.5f);
 
         Debug.Log($"Health pickup collected! Healed: {(isFullHeal ? "FULL" : healthAmount.ToString())}");
@@ -118,7 +110,6 @@ public class HealthPickup : MonoBehaviour
 
     void CreateDefaultHealEffect(Vector3 position)
     {
-        // Создаем простой эффект программно
         GameObject healEffect = new GameObject("HealEffect");
         healEffect.transform.position = position;
         healEffect.AddComponent<HealEffect>();
@@ -132,7 +123,6 @@ public class HealthPickup : MonoBehaviour
         }
     }
 
-    // Визуализация в редакторе
     void OnDrawGizmos()
     {
         Gizmos.color = healthAmount >= 50f ? Color.red : Color.green;

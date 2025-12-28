@@ -19,7 +19,6 @@ public class EnemyHealth : MonoBehaviour
 
         health -= damageAmount;
 
-        // Оповещаем ИИ о получении урона
         EnemyAI enemyAI = GetComponent<EnemyAI>();
         if (enemyAI != null)
         {
@@ -38,24 +37,20 @@ public class EnemyHealth : MonoBehaviour
     {
         Debug.Log("Enemy died!");
 
-        // Отключаем коллайдер
         Collider2D collider = GetComponent<Collider2D>();
         if (collider != null)
             collider.enabled = false;
 
-        // Запускаем эффект растворения
         if (useDissolveEffect && dissolveEffect != null)
         {
             dissolveEffect.StartDissolve();
         }
         else
         {
-            // Стандартное уничтожение
             Destroy(gameObject);
         }
     }
 
-    // Для тестирования в редакторе
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.T))

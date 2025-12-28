@@ -29,7 +29,6 @@ public class PlayerMovement : MonoBehaviour
     private Camera cam;
     private Vector2 mousePos;
 
-    // Для визуальной отладки в редакторе
     public bool IsRunning => isRunning;
     public bool IsDashing => isDashing;
     public float CurrentSpeed => currentSpeed;
@@ -69,7 +68,6 @@ public class PlayerMovement : MonoBehaviour
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
 
-        // Сохраняем последнее направление движения для даша
         if (moveX != 0 || moveY != 0)
         {
             lastMoveDirection = new Vector2(moveX, moveY).normalized;
@@ -77,7 +75,6 @@ public class PlayerMovement : MonoBehaviour
 
         moveDirection = new Vector2(moveX, moveY).normalized;
 
-        // Получаем позицию мыши для вращения
         mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
     }
 
@@ -85,7 +82,6 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 targetVelocity = moveDirection * currentSpeed;
 
-        // Плавное ускорение и замедление
         if (moveDirection.magnitude > 0.1f)
         {
             rb.velocity = Vector2.Lerp(rb.velocity, targetVelocity, acceleration * Time.fixedDeltaTime);
@@ -104,13 +100,11 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleDash()
     {
-        // Обновляем таймер перезарядки
         if (dashCooldownTimer > 0)
         {
             dashCooldownTimer -= Time.deltaTime;
         }
 
-        // Активация даша
         if (Input.GetKeyDown(KeyCode.Space) && dashCooldownTimer <= 0 && lastMoveDirection != Vector2.zero)
         {
             StartDash();
@@ -123,13 +117,10 @@ public class PlayerMovement : MonoBehaviour
         dashTime = dashDuration;
         dashCooldownTimer = dashCooldown;
 
-        // Сохраняем текущую скорость перед рывком
         Vector2 dashVelocity = lastMoveDirection * (dashDistance / dashDuration);
 
-        // Применяем рывок
         rb.velocity = dashVelocity;
 
-        // Визуальные эффекты
         if (dashParticles != null)
         {
             dashParticles.Play();
@@ -146,7 +137,6 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            // Плавно уменьшаем скорость во время даша
             rb.velocity = Vector2.Lerp(rb.velocity, Vector2.zero, 0.1f);
         }
     }
@@ -155,16 +145,12 @@ public class PlayerMovement : MonoBehaviour
     {
         isDashing = false;
 
-        // ВОССТАНАВЛИВАЕМ КОНТРОЛЬ НАД ПЕРСОНАЖЕМ
-        // Сбрасываем скорость к нормальному значению
         if (moveDirection.magnitude > 0.1f)
         {
-            // Если есть input, устанавливаем нормальную скорость движения
             rb.velocity = moveDirection * currentSpeed;
         }
         else
         {
-            // Если input нет, останавливаем персонажа
             rb.velocity = Vector2.zero;
         }
     }
@@ -174,7 +160,6 @@ public class PlayerMovement : MonoBehaviour
         Vector2 lookDir = mousePos - rb.position;
         float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
 
-        // Плавное вращение
         Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.forward);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }

@@ -15,7 +15,6 @@ public class Automat : Weapon
     {
         if (!CanShoot()) return;
 
-        // Выстрел
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
 
@@ -28,14 +27,12 @@ public class Automat : Weapon
 
         CreateMuzzleFlash();
 
-        // Выброс гильзы
         EjectShell();
 
         ApplyRecoil();
 
         PlayShootSound();
 
-        // Настраиваем урон пули
         Bullet bulletScript = bullet.GetComponent<Bullet>();
         if (bulletScript != null)
         {

@@ -25,7 +25,6 @@ public class DoorTrigger : MonoBehaviour
         }
     }
 
-    // Визуализация триггера в редакторе
     void OnDrawGizmos()
     {
         Collider2D collider = GetComponent<Collider2D>();

@@ -19,11 +19,9 @@ public class EnemyBullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // Игнорируем столкновения с врагами и другими пулями
         if (other.CompareTag("Enemy") || other.CompareTag("EnemyBullet"))
             return;
 
-        // Если попали в игрока
         if (other.CompareTag("Player"))
         {
             PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
@@ -34,28 +32,22 @@ public class EnemyBullet : MonoBehaviour
         }
         else
         {
-            // Если столкнулись с чем-то другим (стена, препятствие)
-            // Создаем эффект разрушения
             if (destroyEffect != null)
             {
                 Instantiate(destroyEffect, transform.position, Quaternion.identity);
             }
         }
 
-        // Уничтожаем пулю при любом столкновении
         Destroy(gameObject);
     }
 
-    // Также обрабатываем физические столкновения (если коллайдер не является триггером)
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Создаем эффект разрушения
         if (destroyEffect != null)
         {
             Instantiate(destroyEffect, transform.position, Quaternion.identity);
         }
 
-        // Уничтожаем пулю
         Destroy(gameObject);
     }
 }

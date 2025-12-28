@@ -52,7 +52,6 @@ public class ExplosiveBarrel : MonoBehaviour
 
             StartCoroutine(ExplodeWithDelay());
 
-            // Уничтожаем пулю
             Destroy(other.gameObject);
         }
     }
@@ -63,7 +62,6 @@ public class ExplosiveBarrel : MonoBehaviour
         if (debugMode)
             Debug.Log($"OnCollisionEnter2D: {collision.gameObject.name}, tag: {collision.gameObject.tag}");
 
-        // Взрыв от столкновения с пулей
         if (collision.gameObject.CompareTag("Bullet") && !hasExploded)
         {
             if (debugMode)
@@ -71,11 +69,9 @@ public class ExplosiveBarrel : MonoBehaviour
 
             StartCoroutine(ExplodeWithDelay());
 
-            // Уничтожаем пулю
             Destroy(collision.gameObject);
         }
 
-        // Взрыв при сильном столкновении
         if (collision.relativeVelocity.magnitude > 10f && !hasExploded)
         {
             if (debugMode)
@@ -85,7 +81,6 @@ public class ExplosiveBarrel : MonoBehaviour
         }
     }
 
-    // Публичный метод для принудительного взрыва из других скриптов
     public void TriggerExplosion()
     {
         if (!hasExploded)
@@ -103,7 +98,6 @@ public class ExplosiveBarrel : MonoBehaviour
         if (debugMode)
             Debug.Log($"Бочка начинает взрыв на {gameObject.name}");
 
-        // Визуальная индикация перед взрывом
         if (barrelModel != null)
         {
             var spriteRenderer = barrelModel.GetComponent<SpriteRenderer>();
@@ -123,7 +117,6 @@ public class ExplosiveBarrel : MonoBehaviour
         if (debugMode)
             Debug.Log($"ВЗРЫВ! Позиция: {transform.position}, радиус: {explosionRadius}");
 
-        // Создаем эффект взрыва
         if (explosionEffectPrefab != null)
         {
             Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
@@ -133,13 +126,11 @@ public class ExplosiveBarrel : MonoBehaviour
             Debug.LogWarning("Не назначен explosionEffectPrefab!");
         }
 
-        // Проигрываем звук
         if (explosionSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(explosionSound);
         }
 
-        // ВИЗУАЛИЗАЦИЯ ДЛЯ ОТЛАДКИ
         if (debugMode)
         {
             Debug.DrawLine(transform.position, transform.position + Vector3.right * explosionRadius, Color.red, 2f);
@@ -148,13 +139,11 @@ public class ExplosiveBarrel : MonoBehaviour
             Debug.DrawLine(transform.position, transform.position + Vector3.down * explosionRadius, Color.red, 2f);
         }
 
-        // Находим все объекты в радиусе взрыва (ВСЕ объекты, потом фильтруем)
         Collider2D[] allColliders = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
 
         if (debugMode)
             Debug.Log($"Найдено коллайдеров в радиусе: {allColliders.Length}");
 
-        // Список для отладки
         List<string> damagedObjects = new List<string>();
 
         foreach (Collider2D hit in allColliders)
@@ -166,10 +155,8 @@ public class ExplosiveBarrel : MonoBehaviour
             if (debugMode)
                 Debug.Log($"Проверяем объект: {hit.gameObject.name}, тег: {hit.tag}, расстояние: {distance}");
 
-            // Проверяем, находится ли объект в пределах радиуса
             if (distance > explosionRadius) continue;
 
-            // Применяем физическую силу
             Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
             if (rb != null && !rb.isKinematic)
             {
@@ -180,7 +167,6 @@ public class ExplosiveBarrel : MonoBehaviour
                     Debug.Log($"Применена сила к {hit.gameObject.name}: {direction * explosionForce}");
             }
 
-            // Рассчитываем урон в зависимости от расстояния
             float damageMultiplier = Mathf.Clamp01(1f - (distance / explosionRadius));
             float actualDamage = explosionDamage * damageMultiplier;
 
@@ -189,7 +175,6 @@ public class ExplosiveBarrel : MonoBehaviour
 
             bool damageApplied = false;
 
-            // Наносим урон врагам
             if (damageEnemies && hit.CompareTag("Enemy"))
             {
                 EnemyHealth enemyHealth = hit.GetComponent<EnemyHealth>();
@@ -204,7 +189,6 @@ public class ExplosiveBarrel : MonoBehaviour
                 }
             }
 
-            // Наносим урон игроку
             if (damagePlayer && hit.CompareTag("Player"))
             {
                 PlayerHealth playerHealth = hit.GetComponent<PlayerHealth>();
@@ -219,7 +203,6 @@ public class ExplosiveBarrel : MonoBehaviour
                 }
             }
 
-            // Цепная реакция с другими взрывными объектами
             if (hit.CompareTag("Explosive") && hit.gameObject != gameObject)
             {
                 ExplosiveBarrel otherBarrel = hit.GetComponent<ExplosiveBarrel>();
@@ -234,7 +217,6 @@ public class ExplosiveBarrel : MonoBehaviour
             }
         }
 
-        // Вывод отладочной информации
         if (debugMode)
         {
             Debug.Log($"=== ОТЧЕТ О ВЗРЫВЕ ===");
@@ -247,24 +229,20 @@ public class ExplosiveBarrel : MonoBehaviour
             Debug.Log($"=====================");
         }
 
-        // Отключаем видимую часть бочки
         if (barrelModel != null)
         {
             barrelModel.SetActive(false);
         }
 
-        // Отключаем коллайдер
         Collider2D collider = GetComponent<Collider2D>();
         if (collider != null)
         {
             collider.enabled = false;
         }
 
-        // Уничтожаем объект через время
         Destroy(gameObject, 2f);
     }
 
-    // Визуализация радиуса взрыва в редакторе
     private void OnDrawGizmosSelected()
     {
         if (showExplosionRadius)
@@ -274,7 +252,6 @@ public class ExplosiveBarrel : MonoBehaviour
         }
     }
 
-    // Метод для тестирования в редакторе
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.K) && debugMode && !hasExploded)

@@ -9,21 +9,17 @@ public class WeaponPickup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Получаем менеджер оружия игрока
             PlayerWeaponManager weaponManager = other.GetComponent<PlayerWeaponManager>();
 
             if (weaponManager != null)
             {
-                // Добавляем оружие игроку
                 weaponManager.PickupWeapon(weaponName);
 
-                // Создаем эффект подбора
                 if (pickupEffect != null)
                 {
                     Instantiate(pickupEffect, transform.position, Quaternion.identity);
                 }
 
-                // Уничтожаем предмет подбора
                 Destroy(gameObject);
             }
         }

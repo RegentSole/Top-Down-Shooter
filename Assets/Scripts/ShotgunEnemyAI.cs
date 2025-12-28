@@ -33,7 +33,6 @@ public class ShotgunEnemyAI : EnemyAI
 
     protected override void PatrolBehavior()
     {
-        // Агрессивное патрулирование - быстрые движения
         if (Random.Range(0f, 1f) < 0.02f)
         {
             movement = Random.insideUnitCircle.normalized;
@@ -49,10 +48,8 @@ public class ShotgunEnemyAI : EnemyAI
 
         Vector2 directionToPlayer = (player.position - transform.position).normalized;
 
-        // Агрессивно преследуем игрока
         movement = directionToPlayer;
 
-        // Если достаточно близко - атакуем даже во время преследования
         if (distanceToPlayer <= attackRange && Time.time >= nextFireTime)
         {
             AttackBehavior();
@@ -61,7 +58,6 @@ public class ShotgunEnemyAI : EnemyAI
 
     protected override void AttackBehavior()
     {
-        // Продолжаем движение во время атаки (агрессивное поведение)
         if (distanceToPlayer > minAttackDistance)
         {
             Vector2 directionToPlayer = (player.position - transform.position).normalized;
@@ -81,7 +77,6 @@ public class ShotgunEnemyAI : EnemyAI
 
     protected override void FleeBehavior()
     {
-        // Дробовики редко отступают, но если здоровье низкое...
         if (health < 20f)
         {
             Vector2 directionFromPlayer = (transform.position - player.position).normalized;
@@ -89,7 +84,6 @@ public class ShotgunEnemyAI : EnemyAI
         }
         else
         {
-            // Иначе продолжаем атаковать
             AttackBehavior();
         }
     }
@@ -112,7 +106,6 @@ public class ShotgunEnemyAI : EnemyAI
             }
         }
 
-        // Отдача (отталкивание назад)
         Vector2 recoilDirection = -((Vector2)(player.position - transform.position)).normalized;
         rb.AddForce(recoilDirection * 2f, ForceMode2D.Impulse);
     }
@@ -121,7 +114,6 @@ public class ShotgunEnemyAI : EnemyAI
     {
         base.HandleStateTransitions();
 
-        // Дополнительная агрессивная логика
         if (playerDetected && currentState != AIState.Attack)
         {
             currentState = AIState.Chase;
@@ -132,7 +124,6 @@ public class ShotgunEnemyAI : EnemyAI
     {
         base.TakeDamage(damage);
 
-        // Становятся еще более агрессивными при получении урона
         if (health < 30f && !alwaysCharge)
         {
             alwaysCharge = true;

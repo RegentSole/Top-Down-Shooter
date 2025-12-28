@@ -31,7 +31,6 @@ public class MeleeEnemyAI : EnemyAI
 
     protected override void PatrolBehavior()
     {
-        // Беспокойное патрулирование
         if (Random.Range(0f, 1f) < 0.01f)
         {
             movement = Random.insideUnitCircle.normalized;
@@ -44,7 +43,6 @@ public class MeleeEnemyAI : EnemyAI
 
         if (useZigZag)
         {
-            // Зигзагообразное движение для усложнения прицеливания игроком
             zigZagTimer += Time.deltaTime;
             Vector2 perpendicular = new Vector2(-directionToPlayer.y, directionToPlayer.x);
             zigZagDirection = directionToPlayer + perpendicular * Mathf.Sin(zigZagTimer * zigZagFrequency) * zigZagAmplitude;
@@ -55,7 +53,6 @@ public class MeleeEnemyAI : EnemyAI
             movement = directionToPlayer;
         }
 
-        // Атака во время преследования если достаточно близко
         if (distanceToPlayer <= meleeRange && Time.time >= nextAttackTime)
         {
             AttackBehavior();
@@ -66,11 +63,9 @@ public class MeleeEnemyAI : EnemyAI
     {
         if (Time.time >= nextAttackTime)
         {
-            // Рывок к игроку
             Vector2 lungeDirection = (player.position - transform.position).normalized;
             rb.AddForce(lungeDirection * lungeForce, ForceMode2D.Impulse);
 
-            // Проверка попадания
             if (distanceToPlayer <= meleeRange * 1.2f) // Немного увеличенный диапазон для компенсации движения
             {
                 PerformMeleeAttack();
@@ -82,7 +77,6 @@ public class MeleeEnemyAI : EnemyAI
 
     protected override void FleeBehavior()
     {
-        // Мелкие враги могут отступать при низком здоровье
         if (health < 15f)
         {
             Vector2 directionFromPlayer = (transform.position - player.position).normalized;
@@ -90,14 +84,12 @@ public class MeleeEnemyAI : EnemyAI
         }
         else
         {
-            // Иначе продолжают атаковать
             AttackBehavior();
         }
     }
 
     void PerformMeleeAttack()
     {
-        // Проверяем попадание с помощью Raycast или OverlapCircle
         Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(transform.position, meleeRange);
 
         foreach (var collider in hitPlayers)
@@ -113,7 +105,6 @@ public class MeleeEnemyAI : EnemyAI
             }
         }
 
-        // Визуальные эффекты атаки
         if (animator != null)
         {
             animator.SetTrigger("Attack");
@@ -124,20 +115,16 @@ public class MeleeEnemyAI : EnemyAI
     {
         base.HandleStateTransitions();
 
-        // Ближние враги сразу переходят в атаку при обнаружении
         if (playerDetected && currentState == AIState.Patrol)
         {
             currentState = AIState.Chase;
         }
     }
 
-    // Визуализация диапазона ближней атаки - ПРАВИЛЬНАЯ ВЕРСИЯ
     protected override void OnDrawGizmos()
     {
-        // Сначала вызываем базовую визуализацию
         base.OnDrawGizmos();
 
-        // Затем добавляем свою визуализацию
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position, meleeRange);
     }

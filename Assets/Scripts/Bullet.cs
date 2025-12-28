@@ -11,7 +11,6 @@ public class Bullet : MonoBehaviour
 
     void Start()
     {
-        // Настройка трейла при старте
         if (bulletTrail != null)
         {
             bulletTrail.time = trailTime;
@@ -31,7 +30,6 @@ public class Bullet : MonoBehaviour
                 enemyHealth.TakeDamage(damage);
             }
 
-            // Отсоединяем трейл перед уничтожением пули
             DetachTrail();
             Destroy(gameObject);
         }
@@ -46,7 +44,6 @@ public class Bullet : MonoBehaviour
     {
         if (bulletTrail != null)
         {
-            // Отсоединяем трейл от пули, чтобы он плавно исчез
             bulletTrail.transform.SetParent(null);
             Destroy(bulletTrail.gameObject, bulletTrail.time);
         }
